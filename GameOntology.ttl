@@ -30,6 +30,16 @@
 
 :TabletopGame 	rdf:type	rdfs:Class.
 
+:GameTypes		rdf:type		rdfs:Class .
+:TypeMechanicalClustering	rdf:type		rdfs:Class ;
+					rdfs:subClassOf	:GameTypes .
+:TypeThematicClustering	rdf:type		rdfs:Class ;
+					rdfs:subClassOf	:GameTypes .
+:TypeComponentClustering	rdf:type		rdfs:Class ;
+					rdfs:subClassOf	:GameTypes .
+:TypePlayerClustering		rdf:type		rdfs:Class ;
+					rdfs:subClassOf	:GameTypes .
+
 #Class Game Types
 #:hasType 	:GameTypes ;
 #:hasType 	:TypePlayerClustering ;
@@ -41,6 +51,8 @@
 #:TypeComponentClustering	rdf:type	rdfs:Class.
 #:TypeMechanicalClustering	rdf:type	rdfs:Class.
 #:TypePlayerClustering		rdf:type	rdfs:Class.
+
+
 
 
 #SubClasses of Component Clustering
@@ -1263,3 +1275,4 @@ rdf:type	:TabletopGame;
 	:hasMinimumPlayers "2"^^xsd:integer ;
 	:hasMaximumPlayers "5"^^xsd:integer ; 
 	:hasMinimumAge "12"^^xsd:integer .
+
