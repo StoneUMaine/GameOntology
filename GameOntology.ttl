@@ -3,491 +3,423 @@
 @prefix ds: <http://example.org/SIE580/tabletop/dataset#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-#@prefix dolce: <http://www.example.org/dolce#> . # this is a placeholder
-#@prefix dolce: <https://www.loa.istc.cnr.it/index.php/dolce/> . #maybe correct
-
-#@prefix dlp: <https://www.w3.org/2001/sw/BestPractices/WNET/DLP3941> .
-
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-#@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# Completed:
+# - added ds: namespace, converted games and elements to it
+
+#	TO DO: (or at least to consider)
+# - Add more instances of physical components. I tested this out a bit in Settlers of Catan. Does that look right to you?
+# - Do we want to convert specific the lowest level of mechanic classes to instances?
+# - Create more subclass structure for mechanics?
+# - Are we still happy with subclass structure for Types?
+# - I'm wondering if games should not just be rdf:type :TabletopGame, but also rdf:type and then their Types subclass.
+# - Do we need more labels, or to add other kinds of notation? 
+
+###################################
+#    Class Restrictions, Comp 4   #
+###################################
+
+# SECTION 1. Hacking out some of this stuff, not worrying too much about syntax yet
+#:BoardGame	needs		board
+#:DiceGame		needs		dice
+#:MiniatureGame	needs 	miniatures
+#:CardGame		needs		cards
+#:CollCompGame	needs 	2 or more players
+
+#:TypeMechanicalClustering	needs		2 or more mechanics??
+
+#:ChildGame		minAge	less than 8?
+#:MultiPlayGame		needs		2 or more players
+#:PartyGame		needs		2 or more players
+#				complexity??, maxTime??
+#:SinglePlayerGame	needs		1 player	
+#:AdultGame		minAge	more than 14?
+#:FamilyGame		minAge	10 or less?
+#				needs		2 or more players
+
+#How much do we want to include mechanics?
+
+#:ChildGame		owl:disjointWith		:AdultGame
+#:SinglePlayerGame	owl:disjointWith		:MultiPlayGame
+#:PartyGame		owl:disjointWith		:SinglePlayerGame
+
+#:AbstractGame		owl:complimentOf :Theme
+#:DeductionGame		needs		:MechDeduction
+#:RacingGame		needs		:MechRacing
+#:CivBuildGame		needs		:MechCivBuilding
 
 
-#####Class Definitions
 
-#dol:non-physical-object
+# @prefix st: <http://example.org/SIE580/tabletop/structures#> .
+#:MechDiceRolling	rdf:type	:GameMechanic;
 
-#:GameObjectives 		rdf:type 	dlp:non-agentive-social-object .	#NASO
-#:TabletopGame 		rdf:type 	dlp:concept .	#CONCEPT
-#:PlayerResources 	rdf:type	dlp:role .	#ROLE
-#:HumanPlayer		rdf:type	dlp:agentive-physical-object .		#APO
-#:PhysicalComponents 	rdf:type	dlp:non-agentive-physical-object .		#NAPO
-#:AccomplishmentMechanics	rdf:type	dlp:accomplishment .	#ACCOMPLISHMENT
-#:PlayerAction 		rdf:type	dlp:achievement .	#ACHIEVEMENT
-#:ProcessMechanics 	rdf:type	dlp:process .	#PROCESS
-#:GameType 			rdf:type	dlp:abstract-quality .	#ABSTRACT_QUALITY
-#:GameUserData 		rdf:type	dlp:abstract-quality .	#ABSTRACT_QUALITY
 
+###########################
+#    Class Definitions    #
+###########################
 
 :TabletopGame 	rdf:type	rdfs:Class.
 
-:GameTypes		rdf:type		rdfs:Class .
-:TypeMechanicalClustering	rdf:type		rdfs:Class ;
-					rdfs:subClassOf	:GameTypes .
-:TypeThematicClustering	rdf:type		rdfs:Class ;
-					rdfs:subClassOf	:GameTypes .
-:TypeComponentClustering	rdf:type		rdfs:Class ;
-					rdfs:subClassOf	:GameTypes .
-:TypePlayerClustering		rdf:type		rdfs:Class ;
-					rdfs:subClassOf	:GameTypes .
-
-#Class Game Types
-#:hasType 	:GameTypes ;
-#:hasType 	:TypePlayerClustering ;
-#:hasType 	:TypeMechanicalClustering ;
-#:hasType 	:TypeComponentClustering .
-
-#:GameTypes		rdf:type		rdfs:Class;
-#			rdfs:subClassOf	:TabletopGame .
-#:TypeComponentClustering	rdf:type	rdfs:Class.
-#:TypeMechanicalClustering	rdf:type	rdfs:Class.
-#:TypePlayerClustering		rdf:type	rdfs:Class.
+:GameType				rdf:type	rdfs:Class .
+:TypeMechanicalClustering	rdfs:subClassOf	:GameType .
+:TypeThematicClustering	rdfs:subClassOf	:GameType .
+:TypeComponentClustering	rdfs:subClassOf	:GameType .
+:TypePlayerClustering		rdfs:subClassOf	:GameType .
 
 
-
-
-#SubClasses of Component Clustering
+#### SubClasses of Component Clustering
 # These represent physical elements that are a part of a game
 
 :BoardGame		rdf:type		rdfs:Class;
 			rdfs:subClassOf	:TabletopGame ;
-			rdf:type		:TypeComponentClustering .
+			:ofGameType	:TypeComponentClustering .
 :DiceGame		rdf:type		rdfs:Class;
 			rdfs:subClassOf	:TabletopGame ;
-			rdf:type		:TypeComponentClustering .
+			:ofGameType	:TypeComponentClustering .
 :MiniatureGame	rdf:type		rdfs:Class;
 			rdfs:subClassOf	:TabletopGame ;
-			rdf:type		:TypeComponentClustering .
+			:ofGameType	:TypeComponentClustering .
 :CardGame		rdf:type		rdfs:Class;
 			rdfs:subClassOf	:TabletopGame ;
-			rdf:type		:TypeComponentClustering .
+			:ofGameType	:TypeComponentClustering .
 :CollCompGame	rdf:type		rdfs:Class;
 			rdfs:subClassOf	:TabletopGame ;
-			rdf:type		:TypeComponentClustering .
+			:ofGameType	:TypeComponentClustering .
 
-# SubClasses of Mechanical Clustering
+#### SubClasses of Mechanical Clustering
 :AbstractGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :DeductionGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :RacingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :CivBuildGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :FarmingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :TradingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :WorkerPlacementGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :BluffingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :CityBuildingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :CivilizationGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :CivilWarGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :CooperativeGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :EconomicGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :ExplorationGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :FarmingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :FightingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :LegacyGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MemoryGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MultiPlayGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :NegotiationGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :NumberGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :PoliticalGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :ScenarioGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :SecretUnitDeploymentGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :SemiCooperativeGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :StrategyGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :TerritoryBuildingGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :TilePlacementGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 :WarGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeMechanicalClustering;
+			:ofGameType	:TypeMechanicalClustering;
 			rdfs:subClassOf	:TabletopGame .
 
 
-#SubClasses of Player Clustering
+#### SubClasses of Player Clustering
 :ChildGame		rdf:type		rdfs:Class;
-			rdf:type		:TypePlayerClustering;
+			:ofGameType	:TypePlayerClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MultiPlayGame	rdf:type		rdfs:Class;
-			rdf:type		:TypePlayerClustering;
+			:ofGameType	:TypePlayerClustering;
 			rdfs:subClassOf	:TabletopGame .
 :PartyGame		rdf:type		rdfs:Class;
-			rdf:type		:TypePlayerClustering;
+			:ofGameType	:TypePlayerClustering;
 			rdfs:subClassOf	:TabletopGame .
 :SinglePlayerGame	rdf:type		rdfs:Class;
-				rdf:type		:TypePlayerClustering;
+				:ofGameType	:TypePlayerClustering;
 				rdfs:subClassOf	:TabletopGame .
 :AdultGame		rdf:type		rdfs:Class;
-			rdf:type		:TypePlayerClustering;
+			:ofGameType	:TypePlayerClustering;
 			rdfs:subClassOf	:TabletopGame .
 :FamilyGame	rdf:type		rdfs:Class;
-			rdf:type		:TypePlayerClustering;
+			:ofGameType	:TypePlayerClustering;
 			rdfs:subClassOf	:TabletopGame .
 
-#SubClasses of Thematic Clustering
+#### SubClasses of Thematic Clustering
 :AgeOfReasonGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :AnimalGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :AnimalsGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :FantasyGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MedicalGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MedievalGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MoviesTheme	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :MythologyGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :NaturicalGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :NovelBasedGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :RenaissanceGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :ScienceFictionGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :ScienceGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 :SpaceExplorationGame	rdf:type		rdfs:Class;
-			rdf:type		:TypeThematicClustering;
+			:ofGameType	:TypeThematicClustering;
 			rdfs:subClassOf	:TabletopGame .
 
 
-#Game Characteristics
+#### Game Characteristics
 :PhysicalComponents	rdf:type		rdfs:Class.
-:GameProcesses		rdf:type		rdfs:Class.
+:GameMechanic		rdf:type		rdfs:Class.
 :GameplayFunctions	rdf:type		rdfs:Class.
 
 
-#Game Processes / Mechanics
-:TabletopGame 	:hasProcess :GameProcesses ;
-		:hasProcess :MechWorkerPlacement ;
-		:hasProcess :MechAuctions ;
-		:hasProcess :MechMovingComponents ;
-		:hasProcess :MechCoopInteraction ;
-		:hasProcess :MechDrafting ;
-		:hasProcess :MechDiceRolling ;
-		:hasProcess :MechActionDrafting ;
-		:hasProcess :MechActionPoints ;
-		:hasProcess :MechActionQueue ;
-		:hasProcess :MechActionRetrieval ;
-		:hasProcess :MechAlliances ;
-		:hasProcess :MechAreaImpulse ;
-		:hasProcess :MechAreaInfluence ;
-		:hasProcess :MechAreaMovement ;
-		:hasProcess :MechAsymmetricRoles  ;
-		:hasProcess :MechAuctionBidding ;
-		:hasProcess :MechAuctionSealedBid ;
-		:hasProcess :MechAutomaticResourceGrowth ;
-		:hasProcess :MechBetrayal ;
-		:hasProcess :MechBettingBluffing ;
-		:hasProcess :MechBribery ;
-		:hasProcess :MechCardPlayConflictResolution ;
-		:hasProcess :MechClosedDrafting ;
-		:hasProcess :MechCommoditySpeculation ;
-		:hasProcess :MechContracts ;
-		:hasProcess :MechDeckBuilding ;
-		:hasProcess :MechDeduction ;
-		:hasProcess :MechDelayedPurchase ;
-		:hasProcess :MechDieIconResolution ;
-		:hasProcess :MechDifferentWorkerTypes ;
-		:hasProcess :MechEndGameBonuses ;
-		:hasProcess :MechEvents ;
-		:hasProcess :MechFollowing ;
-		:hasProcess :MechForceCommitment ;
-		:hasProcess :MechGridMovement ;
-		:hasProcess :MechHandManagement ;
-		:hasProcess :MechHexagonGrid ;
-		:hasProcess :MechHiddenMovement ;
-		:hasProcess :MechImpulseMovement ;
-		:hasProcess :MechIncome ;
-		:hasProcess :MechIncreaseValueUnchosenResources ;
-		:hasProcess :MechInduction ;
-		:hasProcess :MechKingOfTheHill ;
-		:hasProcess :MechLoans ;
-		:hasProcess :MechLoseATurn ;
-		:hasProcess :MechMapAddition ;
-		:hasProcess :MechMapDeformation ;
-		:hasProcess :MechMarket ;
-		:hasProcess :MechMatching ;
-		:hasProcess :MechModularBoard ;
-		:hasProcess :MechMultiUseCards ;
-		:hasProcess :MechNarrativeChoice ;
-		:hasProcess :MechNegotiation ;
-		:hasProcess :MechOncePerGameAbilities ;
-		:hasProcess :MechOpenDrafting ;
-		:hasProcess :MechOwnership ;
-		:hasProcess :MechPickupAndDeliver ;
-		:hasProcess :MechPlayerElimination ;
-		:hasProcess :MechPointToPointMovement ;
-		:hasProcess :MechRacing ;
-		:hasProcess :MechRollSpinAndMove ;
-		:hasProcess :MechSetCollection ;
-		:hasProcess :MechSimultaneousActionSelection ;
-		:hasProcess :MechSquareGridBoard ;
-		:hasProcess :MechStatCheckResolution ;
-		:hasProcess :MechStockHolding ;
-		:hasProcess :MechStorytelling ;
-		:hasProcess :MechSuddenDeathEnding ;
-		:hasProcess :MechTags ;
-		:hasProcess :MechTakeThat ;
-		:hasProcess :MechTeamBasedGame ;
-		:hasProcess :MechTechTrees ;
-		:hasProcess :MechTilePlacement ;
-		:hasProcess :MechTrackMovement ;
-		:hasProcess :MechTrading ;
-		:hasProcess :MechTurnOrderClaimAction ;
-		:hasProcess :MechVariablePhaseOrder ;
-		:hasProcess :MechVariablePlayerPowers ;
-		:hasProcess :MechVariableSetup ;
-		:hasProcess :MechVoting .
-
+#### Game Processes / Mechanics
 
 :MechWorkerPlacement	rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechAuctions		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechMovingComponents	rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechCoopInteraction	rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechDrafting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechDiceRolling		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+				rdfs:subClassOf	:GameMechanic.
 :MechMovingComponents		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechCoopInteraction		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDrafting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDiceRolling		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechActionDrafting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechActionPoints		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechActionQueue		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechActionRetrieval		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAlliances		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAreaImpulse		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAreaInfluence		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAreaMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAsymmetricRoles		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAuctionBidding		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAuctionSealedBid		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechAutomaticResourceGrowth		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechBetrayal		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechBettingBluffing		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechBribery		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechCardPlayConflictResolution		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechClosedDrafting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechCommoditySpeculation		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechContracts		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDeckBuilding		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDeduction		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDelayedPurchase		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDieIconResolution		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechDifferentWorkerTypes		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechEndGameBonuses		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechEvents		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechFollowing		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechForceCommitment		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechGridMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechHandManagement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechHexagonGrid		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechHiddenMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechImpulseMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechIncome		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechIncreaseValueUnchosenResources		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechInduction		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechKingOfTheHill		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechLoans		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechLoseATurn		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechMapAddition		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechMapDeformation		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechMarket		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechMatching		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechModularBoard		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechMultiUseCards		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechNarrativeChoice		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechNegotiation		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechOncePerGameAbilities		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechOpenDrafting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechOwnership		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechPickupAndDeliver		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechPlayerElimination		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechPointToPointMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechRacing		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechRollSpinAndMove		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechSetCollection		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechSimultaneousActionSelection		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechSquareGridBoard		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechStatCheckResolution		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechStockHolding		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechStorytelling		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechSuddenDeathEnding		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTags		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTakeThat		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTeamBasedGame		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTechTrees		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTilePlacement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTrackMovement		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTrading		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechTurnOrderClaimAction		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechVariablePhaseOrder		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechVariablePlayerPowers		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechVariableSetup		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
-:MechVoting		rdf:type		rdfs:Class;
-				rdfs:subClassOf	:GameProcesses.
+					rdfs:subClassOf	:GameMechanic.
+:MechCoopInteraction	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
 
+:MechDiceRolling		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechActionDrafting	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechDrafting.
+:MechActionPoints	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechActionQueue		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechActionRetrieval	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechAlliances		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechAreaImpulse		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechAreaInfluence	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechAreaMovement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechUnitMovement.
+:MechAsymmetricRoles	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechAuctionBidding	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechAuctions.
+:MechAuctionSealedBid		rdf:type		rdfs:Class;
+					rdfs:subClassOf	:MechAuctions.
+:MechAutomaticResourceGrowth	rdf:type		rdfs:Class;
+						rdfs:subClassOf	:GameMechanic.
+:MechBetrayal		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechBettingBluffing	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechBribery		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechCardPlayConflictResolution	rdf:type		rdfs:Class;
+						rdfs:subClassOf	:GameMechanic.
+:MechClosedDrafting	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechDrafting.
+:MechCommoditySpeculation	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechContracts		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechDeckBuilding	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechDeduction		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechDelayedPurchase	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechDieIconResolution	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechDifferentWorkerTypes	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechEndGameBonuses	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechEvents		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechFollowing		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechForceCommitment	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechGridMovement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechUnitMovement.
+:MechHandManagement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechHexagonGrid		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechHiddenMovement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechUnitMovement.
+:MechImpulseMovement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechUnitMovement.
+:MechIncome		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechIncreaseValueUnchosenResources	rdf:type		rdfs:Class;
+							rdfs:subClassOf	:GameMechanic.
+:MechInduction		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechKingOfTheHill	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechLoans			rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechLoseATurn		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechMapAddition		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechMapDeformation	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechMarket		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechMatching		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechModularBoard	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechMultiUseCards	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechNarrativeChoice	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechNegotiation		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechOncePerGameAbilities	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechOpenDrafting	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechDrafting.
+:MechOwnership		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechPickupAndDeliver	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechPlayerElimination	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechPointToPointMovement	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:MechUnitMovement.
+:MechRacing		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechRollSpinAndMove	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechSetCollection	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechSimultaneousActionSelection		rdf:type		rdfs:Class;
+							rdfs:subClassOf	:GameMechanic.
+:MechSquareGridBoard	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechStatCheckResolution	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechStockHolding	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechStorytelling	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechSuddenDeathEnding	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechTags			rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTakeThat		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTeamBasedGame	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTechTrees		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTilePlacement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTrackMovement	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:MechUnitMovement.
+:MechTrading		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechTurnOrderClaimAction	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechUnitMovement	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechVariablePhaseOrder	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechVariablePlayerPowers	rdf:type		rdfs:Class;
+					rdfs:subClassOf	:GameMechanic.
+:MechVariableSetup	rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
+:MechVoting		rdf:type		rdfs:Class;
+				rdfs:subClassOf	:GameMechanic.
 :WorkerDice		rdf:type		rdfs:Class;
 				rdfs:subClassOf	:MechWorkerPlacement;
 				rdfs:label		"Dice as Workers".
@@ -502,7 +434,7 @@
 				rdfs:label		"NestedWorkerPlacement".
 
 
-#Gameplay Functions
+#### Gameplay Functions
 :TabletopGame 	:hasFunction :GameplayFunctions ;
 		:hasFunction :GameObjectives ;
 		:hasFunction :ScoringConditions .
@@ -533,7 +465,7 @@
 				rdfs:label		"Highest-Lowest Scoring".
 
 
-#Physical Components
+#### Physical Components
 :TabletopGame 	:hasPart :PhysicalComponents ;
 		:hasPart :CompGameBoard ;
 		:hasPart :CompChips ;
@@ -553,18 +485,17 @@
 			rdfs:subClassOf	:PhysicalComponents.
 
 
-#Removing HumanPlayer, per Torsten's suggestion
-#:HumanPlayer 	:playsGame :GameInstance . #GameInstance???
-#:HumanPlayer 	:takes :PlayerActions .
-#:HumanPlayer 	:manipulates :PlayerResources .
-
-
-####Property Definitions
-
+##############################
+#    Property Definitions    #
+##############################
 
 :hasType 	rdf:type 		rdf:property ;
 		rdfs:domain 	:TabletopGame ;
-		rdfs:range 	:GameTypes .
+		rdfs:range 	:GameType .
+
+:ofGameType	rdf:type		rdf:property .
+#			rdfs:domain	:TabletopGame
+#			rdfs:range		:GameType
 
 :isDiceGame 	rdfs:subPropertyOf 	:hasType ;
 			rdfs:domain		:TabletopGame ;
@@ -614,26 +545,26 @@
 
 
 
-:hasProcess	rdf:type		rdf:property ;
+:hasMechanic	rdf:type		rdf:property ;
 			rdfs:domain	:TabletopGame ;
-			rdfs:range		:GameProcesses .
+			rdfs:range		:GameMechanic .
 
-:hasWorkerPlacement 	rdfs:subPropertyOf 	:hasProcess ;
+:hasWorkerPlacement 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechWorkerPlacement .
-:hasAuctions	 	rdfs:subPropertyOf 	:hasProcess ;
+:hasAuctions	 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechAuctions .
-:hasMovingComps	 	rdfs:subPropertyOf 	:hasProcess ;
+:hasMovingComps	 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechMovingComponents .
-:hasCoopInteraction 	rdfs:subPropertyOf 	:hasProcess ;
+:hasCoopInteraction 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechCoopInteraction .
-:hasDrafting	 	rdfs:subPropertyOf 	:hasProcess ;
+:hasDrafting	 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechDrafting .
-:hasDiceRolling	 	rdfs:subPropertyOf 	:hasProcess ;
+:hasDiceRolling	 	rdfs:subPropertyOf 	:hasMechanic ;
 				rdfs:domain		:TabletopGame ;
 				rdfs:range			:MechDiceRolling .
 
@@ -666,38 +597,27 @@
 
 
 
-# Removing following, involve HumanPlayer
-#:playsGame	rdf:type		rdf:property ;
-#			rdfs:domain	:TabletopGame ;
-#			rdfs:range		:GameProcesses .
+##############################
+#    Instance Definitions    #
+##############################
 
-#:takes		rdf:type		rdf:property ;
-#			rdfs:domain	:HumanPlayer ;
-#			rdfs:range		:PlayerActions .
-
-#:manipulates	rdf:type		rdf:property ;
-#			rdfs:domain	:HumanPlayer ;
-#			rdfs:range		:PlayerResources .
-
-
-#Instance Definitions
-
-:SettlersOfCatan		rdf:type	:TabletopGame;
+ds:SettlersOfCatan		rdf:type	:TabletopGame;
 				:hasType	:BoardGame;
 				:hasType	:CivBuildGame;
 				:hasType	:MultiPlayGame;
 				
 				:hasFunction	:GameObjectives;
 
-				:hasProcess	:GameProcesses;
-				:hasProcess 	:MechCoopInteraction ;
+				:hasMechanic	:GameMechanic;
+				:hasMechanic 	:MechCoopInteraction ;
 
-		:hasPart 	:CompGameBoard ;
-		:hasPart 	:CompCards ;
-		:hasPart	:CompTokens ;
-		:hasPart 	:CompMeeples ;
+#### I think we can remove these ####
+#		:hasPart 	:CompGameBoard ;
+#		:hasPart 	:CompCards ;
+#		:hasPart	:CompTokens ;
+#		:hasPart 	:CompMeeples ;
 
-:hasProcess :MechDiceRolling ;
+:hasMechanic :MechDiceRolling ;
 				
 				:hasMinimumTime "60"^^xsd:integer ;
 				:hasMaximumTime "120"^^xsd:integer ;
@@ -705,7 +625,37 @@
 				:hasMaximumPlayers "4"^^xsd:integer ; 
 				:hasMinimumAge "10"^^xsd:integer .
 
-:CavernsTheCaveFarmers
+ds:SettlersOfCatanTokens	rdfs:subClassOf	:CompTokens .
+ds:YellowSettlement		rdf:type		ds:SettlersOfCatanTokens .
+# Do we want to say there are x number of Yellow Settlement pieces, or give each one its own number?
+
+ds:Board_WheatTile01 rdf:type :CompGameBoard .
+ds:Board_WheatTile02 rdf:type :CompGameBoard .
+ds:Board_BrickTile01 rdf:type :CompGameBoard .
+ds:Board_BrickTile02 rdf:type :CompGameBoard .
+ds:Card_Soldier01 rdf:type :CompCards .
+ds:Card_YearOfPlenty01 rdf:type :CompCards .
+ds:Token_RedRoad rdf:type :CompTokens .
+ds:Token_YellowRoad rdf:type :CompTokens .
+ds:Token_YellowCity rdf:type :CompTokens .
+ds:Meeple_Yellow rdf:type :CompMeeples .
+ds:Meeple_Red rdf:type :CompMeeples .
+ds:Meeple_Robber rdf:type :CompMeeples .
+
+ds:SettlersOfCatan :hasPart ds:Board_WheatTile01 .
+ds:SettlersOfCatan :hasPart ds:Board_WheatTile02 .
+ds:SettlersOfCatan :hasPart ds:Board_BrickTile01 .
+ds:SettlersOfCatan :hasPart ds:Board_BrickTile02 .
+ds:SettlersOfCatan :hasPart ds:Card_Soldier01 .
+ds:SettlersOfCatan :hasPart ds:Card_YearOfPlenty01 .
+ds:SettlersOfCatan :hasPart ds:Token_RedRoad .
+ds:SettlersOfCatan :hasPart ds:Token_YellowRoad .
+ds:SettlersOfCatan :hasPart ds:Token_YellowCity .
+ds:SettlersOfCatan :hasPart ds:Meeple_Yellow .
+ds:SettlersOfCatan :hasPart ds:Meeple_Red .
+ds:SettlersOfCatan :hasPart ds:Meeple_Robber .
+
+ds:CavernsTheCaveFarmers
 	rdf:type	:TabletopGame;
 	:hasType	:BoardGame;
 	:hasType	:MultiPlayGame;	
@@ -716,14 +666,14 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess 	:GameMechCoopInteraction ;
-	:hasProcess	:GameWorkerPlacement;
-	:hasProcess	:GameMultiUseCards;
-	:hasProcess	:GameIncreaseValueUnchosenResources;
-	:hasProcess	:GameTurnOrderClaimAction;
-	:hasProcess	:GameVariablePhaseOrder;
-	:hasProcess	:GameAutomaticResourceGrowth;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic 	:MechMechCoopInteraction ;
+	:hasMechanic	:MechWorkerPlacement;
+	:hasMechanic	:MechMultiUseCards;
+	:hasMechanic	:MechIncreaseValueUnchosenResources;
+	:hasMechanic	:MechTurnOrderClaimAction;
+	:hasMechanic	:MechVariablePhaseOrder;
+	:hasMechanic	:MechAutomaticResourceGrowth;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart 	:CompCards ;
@@ -739,7 +689,7 @@
 
 
 
-:Stratego
+ds:Stratego
 
 	rdf:type	:TabletopGame;
 
@@ -752,12 +702,12 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameDeduction;
-	:hasProcess	:GamePointToPointMovement;
-	:hasProcess	:GameSquareGridBoard;
-	:hasProcess	:GameGridMovement;
-	:hasProcess	:GameStatCheckResolution;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeduction;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechSquareGridBoard;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechStatCheckResolution;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -769,7 +719,7 @@
 	:hasMinimumAge "8"^^xsd:integer .
 
 
-:PandemicLegacy
+ds:PandemicLegacy
 	rdf:type	:TabletopGame;
 
 	:hasType	:BoardGame;
@@ -782,13 +732,13 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GamePointToPointMovement;
-	:hasProcess	:GameActionPoints;
-	:hasProcess	:GameHandManagement;
-	:hasProcess	:GameSetCollection;
-	:hasProcess	:GameTrading;
-	:hasProcess	:GameVariablePlayerPowers;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechActionPoints;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariablePlayerPowers;
 	
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -803,7 +753,7 @@
 	:hasMinimumAge "13"^^xsd:integer .
 
 
-:BetrayalAtHouseOnAHill
+ds:BetrayalAtHouseOnAHill
 
 	rdf:type	:TabletopGame;
 
@@ -815,17 +765,17 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GamePointToPointMovement;
-	:hasProcess	:GameTrading;
-	:hasProcess	:GameVariablePlayerPowers;
-	:hasProcess	:GameAsymmetricRoles;
-	:hasProcess	:GameSquareGridBoard;
-	:hasProcess	:GameTilePlacement;
-	:hasProcess	:GameNarrativeChoice;
-	:hasProcess	:GameStorytelling;
-	:hasProcess	:GameInduction;
-	:hasProcess	:GameAlliances;	
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechAsymmetricRoles;
+	:hasMechanic	:MechSquareGridBoard;
+	:hasMechanic	:MechTilePlacement;
+	:hasMechanic	:MechNarrativeChoice;
+	:hasMechanic	:MechStorytelling;
+	:hasMechanic	:MechInduction;
+	:hasMechanic	:MechAlliances;	
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -840,7 +790,7 @@
 
 
 
-:Dominion
+ds:Dominion
 
 	rdf:type	:TabletopGame;
 
@@ -851,13 +801,13 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameDeckBuilding;
-	:hasProcess	:GameOpenDrafting;
-	:hasProcess	:GameVariableSetup;
-	:hasProcess	:GameTakeThat;
-	:hasProcess	:GameDelayedPurchase;
-	:hasProcess	:GameHandManagement;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeckBuilding;
+	:hasMechanic	:MechOpenDrafting;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechDelayedPurchase;
+	:hasMechanic	:MechHandManagement;
 
 	:hasPart	:CompCards;
 
@@ -868,7 +818,7 @@
 	:hasMinimumAge "13"^^xsd:integer .
 
 
-:Risk
+ds:Risk
 
 	rdf:type	:TabletopGame;
 
@@ -878,13 +828,14 @@
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameDeduction;
-	:hasProcess	:GamePointToPointMovement;
-	:hasProcess	:GameDiceRolling;
-	:hasProcess	:GameAreaInfluence;
-	:hasProcess	:GamePlayerElimination;
-	:hasProcess	:GameSetCollection;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeduction;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechPlayerElimination;
+	:hasMechanic	:MechSetCollection;
+
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -896,7 +847,7 @@
 	:hasMaximumPlayers "6"^^xsd:integer ; 
 	:hasMinimumAge "10"^^xsd:integer .
 
-:TwilightImperiumFourthEdition
+ds:TwilightImperiumFourthEdition
 
 	rdf:type	:TabletopGame;
 
@@ -907,25 +858,26 @@
 	:hasType	:PoliticalGame;
 	:hasType	:ScienceFictionGame;
 	:hasType	:SpaceExplorationGame;
+	:hasType	:NegotiationGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameActionDrafting;
-	:hasProcess	:GameImpulseMovement;
-	:hasProcess	:GameDiceRolling;
-	:hasProcess	:GameGridMovement;
-	:hasProcess	:GameHexagonGrid;
-	:hasProcess	:GameIncreaseValueUnchosenResources;
-	:hasProcess	:GameKingOfTheHill;
-	:hasProcess	:GameModularBoard;
-	:hasProcess	:GameRacing;
-	:hasProcess	:GameTechTrees;
-	:hasProcess	:GameTrading;
-	:hasProcess:	:GameVariableTurnOrder;
-	:hasProcess	:GameVariablePlayerPowers;
-	:hasProcess	:GameVariableSetup;
-	:hasProcess	:GameVoting;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechActionDrafting;
+	:hasMechanic	:MechImpulseMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechHexagonGrid;
+	:hasMechanic	:MechIncreaseValueUnchosenResources;
+	:hasMechanic	:MechKingOfTheHill;
+	:hasMechanic	:MechModularBoard;
+	:hasMechanic	:MechRacing;
+	:hasMechanic	:MechTechTrees;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariableTurnOrder;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechVoting;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -938,7 +890,7 @@
 	:hasMaximumPlayers "6"^^xsd:integer ; 
 	:hasMinimumAge "14"^^xsd:integer .
 
-:UNO
+ds:UNO
 
 rdf:type	:TabletopGame;
 
@@ -949,11 +901,11 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameLoseATurn;
-	:hasProcess	:GameHandManagement;
-	:hasProcess	:GameMatching;
-	:hasProcess	:GameTakeThat;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechLoseATurn;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechMatching;
+	:hasMechanic	:MechTakeThat;
 
 	:hasPart	:CompCards;
 
@@ -964,7 +916,7 @@ rdf:type	:TabletopGame;
 	:hasMinimumAge "6"^^xsd:integer .
 
 
-:Battleship
+ds:Battleship
 
 	rdf:type	:TabletopGame;
 
@@ -977,8 +929,8 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:Deduction;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:Deduction;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompMiniatures;
@@ -991,7 +943,7 @@ rdf:type	:TabletopGame;
 
 
 
-:RisingSun
+ds:RisingSun
 
 	rdf:type	:TabletopGame;
 
@@ -1006,24 +958,24 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameActionDrafting;
-	:hasProcess	:GameAlliances;
-	:hasProcess	:GameAreaInfluence;
-	:hasProcess	:GameAreaMovement;
-	:hasProcess	:GameAuctionSealedBid;
-	:hasProcess	:GameBettingBluffing;
-	:hasProcess	:GameClosedDrafting;
-	:hasProcess	:GameEndGameBonuses;
-	:hasProcess	:GameFollowing;
-	:hasProcess	:GameForceCommitment;
-	:hasProcess	:GameNegotiation;
-	:hasProcess	:GameSetCollection;
-	:hasProcess	:GameNegotiation;
-	:hasProcess	:GameSimultaneousActionSelection;
-	:hasProcess	:GameTakeThat;
-	:hasProcess	:GameVariablePhaseOrder;
-	:hasProcess	:GameVariableSetup;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechActionDrafting;
+	:hasMechanic	:MechAlliances;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechAuctionSealedBid;
+	:hasMechanic	:MechBettingBluffing;
+	:hasMechanic	:MechClosedDrafting;
+	:hasMechanic	:MechEndGameBonuses;
+	:hasMechanic	:MechFollowing;
+	:hasMechanic	:MechForceCommitment;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechSimultaneousActionSelection;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechVariablePhaseOrder;
+	:hasMechanic	:MechVariableSetup;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -1038,7 +990,7 @@ rdf:type	:TabletopGame;
 
 
 
-:ROOT
+ds:ROOT
 
 	rdf:type	:TabletopGame;
 
@@ -1052,20 +1004,20 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameGaActionQueue;
-	:hasProcess	:GameActionRetrieval;
-	:hasProcess	:GameAreaInfluence;
-	:hasProcess	:GameAreaMovement;
-	:hasProcess	:GameDiceRolling;
-	:hasProcess	:GameHandManagement;
-	:hasProcess	:GameNegotiation;
-	:hasProcess	:GamePointToPointMovement;
-	:hasProcess	:GameRacing;
-	:hasProcess	:GameSuddenDeathEnding;
-	:hasProcess	:GameTakeThat;
-	:hasProcess	:GameVariablePlayerPowers;
-	:hasProcess	:GameVariableSetup;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechGaActionQueue;
+	:hasMechanic	:MechActionRetrieval;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechRacing;
+	:hasMechanic	:MechSuddenDeathEnding;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -1080,7 +1032,7 @@ rdf:type	:TabletopGame;
 	:hasMinimumAge "10"^^xsd:integer .
 
 
-:Dune
+ds:Dune
 
 	rdf:type	:TabletopGame;
 
@@ -1095,15 +1047,15 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameAlliances;
-	:hasProcess	:GameAreaInfluence;
-	:hasProcess	:GameAuctionBidding;
-	:hasProcess	:GameForceCommitment;
-	:hasProcess	:GameHandManagement;
-	:hasProcess	:GameMapDeformation;
-	:hasProcess	:GameTeamBasedGame;
-	:hasProcess	:GameVariablePlayerPowers;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAlliances;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechForceCommitment;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechMapDeformation;
+	:hasMechanic	:MechTeamBasedGame;
+	:hasMechanic	:MechVariablePlayerPowers;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -1117,7 +1069,7 @@ rdf:type	:TabletopGame;
 
 
 
-:Archipelago
+ds:Archipelago
 
 rdf:type	:TabletopGame;
 
@@ -1132,21 +1084,21 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameAuctionSealedBid;
-	:hasProcess	:GameAuctionBidding;
-	:hasProcess	:GameBribery;
-	:hasProcess	:GameCommoditySpeculation;
-	:hasProcess	:GameGridMovement;
-	:hasProcess	:GameHexagonGrid;
-	:hasProcess	:GameMapAddition;
-	:hasProcess	:GameMarket;
-	:hasProcess	:GameModularBoard;
-	:hasProcess	:GameTakeThat;
-	:hasProcess	:GameTilePlacement;
-	:hasProcess	:GameTrading;
-	:hasProcess	:GameBetrayal;
-	:hasProcess	:GameWorkerPlacement;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAuctionSealedBid;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechBribery;
+	:hasMechanic	:MechCommoditySpeculation;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechHexagonGrid;
+	:hasMechanic	:MechMapAddition;
+	:hasMechanic	:MechMarket;
+	:hasMechanic	:MechModularBoard;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechTilePlacement;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechBetrayal;
+	:hasMechanic	:MechWorkerPlacement;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompMiniatures;
@@ -1162,7 +1114,7 @@ rdf:type	:TabletopGame;
 
 
 
-:Monopoly
+ds:Monopoly
 
 rdf:type	:TabletopGame;
 
@@ -1173,17 +1125,17 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameAuctionBidding;
-	:hasProcess	:GameLoans;
-	:hasProcess	:GameLoseATurn;
-	:hasProcess	:GameOwnership;
-	:hasProcess	:GamePlayerElimination;
-	:hasProcess	:GameRollSpinAndMove;
-	:hasProcess	:GameSetCollection;
-	:hasProcess	:GameStockHolding;
-	:hasProcess	:GameTrackMovement;
-	:hasProcess	:GameTrading;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechLoans;
+	:hasMechanic	:MechLoseATurn;
+	:hasMechanic	:MechOwnership;
+	:hasMechanic	:MechPlayerElimination;
+	:hasMechanic	:MechRollSpinAndMove;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechStockHolding;
+	:hasMechanic	:MechTrackMovement;
+	:hasMechanic	:MechTrading;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompMiniatures;
@@ -1198,7 +1150,7 @@ rdf:type	:TabletopGame;
 
 
 
-:StarWarsRebellion
+ds:StarWarsRebellion
 
 	rdf:type	:TabletopGame;
 
@@ -1212,26 +1164,26 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameAreaMovement;
-	:hasProcess	:GameAreaImpulse;
-	:hasProcess	:GameCardPlayConflictResolution;
-	:hasProcess	:GameContracts;
-	:hasProcess	:GameDelayedPurchase;
-	:hasProcess	:GameDiceRolling;
-	:hasProcess	:GameDieIconResolution;
-	:hasProcess	:GameEvents;
-	:hasProcess	:GameHandManagement;
-	:hasProcess	:GameHiddenMovement;
-	:hasProcess	:GameIncome;
-	:hasProcess	:GameOncePerGameAbilities;
-	:hasProcess	:GameTags;
-	:hasProcess	:GameTakeThat;
-	:hasProcess	:GameTeamBasedGame;
-	:hasProcess	:GameVariablePlayerPowers;
-	:hasProcess	:GameVariableSetup;
-	:hasProcess	:GameWorkerPlacement;
-	:hasProcess	:GameDifferentWorkerTypes;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechAreaImpulse;
+	:hasMechanic	:MechCardPlayConflictResolution;
+	:hasMechanic	:MechContracts;
+	:hasMechanic	:MechDelayedPurchase;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechDieIconResolution;
+	:hasMechanic	:MechEvents;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechHiddenMovement;
+	:hasMechanic	:MechIncome;
+	:hasMechanic	:MechOncePerGameAbilities;
+	:hasMechanic	:MechTags;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechTeamBasedGame;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechWorkerPlacement;
+	:hasMechanic	:MechDifferentWorkerTypes;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -1245,7 +1197,7 @@ rdf:type	:TabletopGame;
 	:hasMinimumAge "14"^^xsd:integer .
 
 
-:Genoa
+ds:Genoa
 
 rdf:type	:TabletopGame;
 
@@ -1257,14 +1209,14 @@ rdf:type	:TabletopGame;
 
 	:hasFunction	:GameObjectives;
 
-	:hasProcess	:GameProcesses;
-	:hasProcess	:GameDiceRolling;
-	:hasProcess	:GameBribery;
-	:hasProcess	:GameGridMovement;
-	:hasProcess	:GameNegotiation;
-	:hasProcess	:GamePickupAndDeliver;
-	:hasProcess	:GameSetCollection;
-	:hasProcess	:GameTrading;
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechBribery;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechPickupAndDeliver;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechTrading;
 
 	:hasPart 	:CompGameBoard ;
 	:hasPart	:CompTokens ;
@@ -1275,4 +1227,61 @@ rdf:type	:TabletopGame;
 	:hasMinimumPlayers "2"^^xsd:integer ;
 	:hasMaximumPlayers "5"^^xsd:integer ; 
 	:hasMinimumAge "12"^^xsd:integer .
+
+
+##########################
+#commented items / archive
+##########################
+
+#@prefix dolce: <http://www.example.org/dolce#> . # this is a placeholder
+#@prefix dolce: <https://www.loa.istc.cnr.it/index.php/dolce/> . #maybe correct
+#@prefix dlp: <https://www.w3.org/2001/sw/BestPractices/WNET/DLP3941> .
+
+#@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+#dol:non-physical-object
+
+#:GameObjectives 		rdf:type 	dlp:non-agentive-social-object .	#NASO
+#:TabletopGame 		rdf:type 	dlp:concept .	#CONCEPT
+#:PlayerResources 	rdf:type	dlp:role .	#ROLE
+#:HumanPlayer		rdf:type	dlp:agentive-physical-object .		#APO
+#:PhysicalComponents 	rdf:type	dlp:non-agentive-physical-object .		#NAPO
+#:AccomplishmentMechanics	rdf:type	dlp:accomplishment .	#ACCOMPLISHMENT
+#:PlayerAction 		rdf:type	dlp:achievement .	#ACHIEVEMENT
+#:ProcessMechanics 	rdf:type	dlp:process .	#PROCESS
+#:GameType 			rdf:type	dlp:abstract-quality .	#ABSTRACT_QUALITY
+#:GameUserData 		rdf:type	dlp:abstract-quality .	#ABSTRACT_QUALITY
+
+#Class Game Types
+#:hasType 	:GameType ;
+#:hasType 	:TypePlayerClustering ;
+#:hasType 	:TypeMechanicalClustering ;
+#:hasType 	:TypeComponentClustering .
+
+#:GameType		rdf:type		rdfs:Class;
+#			rdfs:subClassOf	:TabletopGame .
+#:TypeComponentClustering	rdf:type	rdfs:Class.
+#:TypeMechanicalClustering	rdf:type	rdfs:Class.
+#:TypePlayerClustering		rdf:type	rdfs:Class.
+
+#### Removing HumanPlayer, per Torsten's suggestion
+#:HumanPlayer 	:playsGame :GameInstance . #GameInstance???
+#:HumanPlayer 	:takes :PlayerActions .
+#:HumanPlayer 	:manipulates :PlayerResources .
+
+
+
+# Removing following, involve HumanPlayer
+#:playsGame	rdf:type		rdf:property ;
+#			rdfs:domain	:TabletopGame ;
+#			rdfs:range		:GameMechanic .
+
+#:takes		rdf:type		rdf:property ;
+#			rdfs:domain	:HumanPlayer ;
+#			rdfs:range		:PlayerActions .
+
+#:manipulates	rdf:type		rdf:property ;
+#			rdfs:domain	:HumanPlayer ;
+#			rdfs:range		:PlayerResources .
+
 
