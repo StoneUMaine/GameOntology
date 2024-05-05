@@ -1,0 +1,873 @@
+@prefix : <https://example.org/SIE580/tabletop/#> .
+@prefix game: <https://example.org/SIE580/tabletop/#> .
+@prefix ds: <http://example.org/SIE580/tabletop/dataset#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# Ontology metadata
+@prefix dct: <http://purl.org/dc/terms/> .
+:TabletopGameOntology rdf:type owl:Ontology ;
+dct:title "Tabletop Game Ontology" ;
+dct:description "An ontology describing the relationships between tabletop games" ;
+dct:creator "Chris Green and Tim Stonesifer" ;
+dct:created "2024-05-01"^^xsd:date ;
+dct:modified "2024-05-01"^^xsd:date ;
+dct:license <http://creativecommons.org/licenses/by/4.0/> ;
+dct:provenance "Created for UMaine SIE580, Spring 2024, Ontology Engineering" ;
+owl:versionInfo "Version 1.0" .
+
+
+
+
+##############################
+#    Instance Definitions    #
+##############################
+
+# Instance data of all individual board games logged in our ontology
+# including game types, mechanics, components, game time, min and max players, # and the suggested minimum age to play the game. 
+
+# Components are each labeled with a "count",
+# indicating the number of a given component that comes in the box. 
+
+
+
+ds:SettlersOfCatan	
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/13/catan> ;
+
+rdf:type	:TabletopGame;
+	:hasType	:BoardGame;
+	:hasType	:CivBuildGame;
+	:hasType	:MultiPlayGame;
+				
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic 	:MechCoopInteraction ;
+:hasMechanic :MechDiceRolling ;
+
+	:hasPart 	:CompGameBoard ;
+	:hasPart 	:CompCards ;
+	:hasPart	:CompTokens ;
+	:hasPart 	:CompMeeples ;
+				
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "120"^^xsd:integer ;
+	:hasMinimumPlayers "3"^^xsd:integer ;
+	:hasMaximumPlayers "4"^^xsd:integer ; 
+	:hasMinimumAge "10"^^xsd:integer .
+
+
+
+ds:SettlersOfCatanToken	rdf:type		:CompTokens ;
+					:hasCount		"76"^^xsd:integer .
+ds:SettlersOfCatanCard	rdf:type		:CompCards ;
+					:hasCount		"122"^^xsd:integer .
+ds:SettlersOfCatanMeeple	rdf:type		:CompMeeples ;
+					:hasCount		"1"^^xsd:integer .
+ds:SettlersOfCatanChip	rdf:type		:CompChips ;
+					:hasCount		"18"^^xsd:integer .
+ds:SettlersOfCatanBoard	rdf:type		:CompGameBoard ;
+					:hasCount		"34"^^xsd:integer .
+
+ds:SettlersOfCatan		:hasPart		ds:SettlersOfCatanToken ;
+:hasPart		ds:SettlersOfCatanCard ;
+:hasPart		ds:SettlersOfCatanMeeple ;
+:hasPart		ds:SettlersOfCatanChip ;
+:hasPart		ds:SettlersOfCatanBoard .
+
+
+
+
+
+ds:CavernsTheCaveFarmers
+	
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/102794/caverna-the-cave-farmers> ;
+
+rdf:type	:TabletopGame;
+	:hasType	:BoardGame;
+	:hasType	:MultiPlayGame;	
+	:hasType	:FarmingGame;
+	:hasType	:EconomicGame;
+	:hasType	:AnimalsGame;
+	
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic 	:MechMechCoopInteraction ;
+	:hasMechanic	:MechWorkerPlacement;
+	:hasMechanic	:MechMultiUseCards;
+	:hasMechanic	:MechIncreaseValueUnchosenResources;
+	:hasMechanic	:MechTurnOrderClaimAction;
+	:hasMechanic	:MechVariablePhaseOrder;
+	:hasMechanic	:MechAutomaticResourceGrowth;
+
+	:hasPart 	ds:CavernaBoard ;
+	:hasPart	ds:CavernaToken ;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "210"^^xsd:integer ;
+	:hasMinimumPlayers "1"^^xsd:integer ;
+	:hasMaximumPlayers "7"^^xsd:integer ; 
+	:hasMinimumAge "12"^^xsd:integer .
+
+ds:CavernaToken			rdf:type		:CompTokens ;
+					:hasCount		"160"^^xsd:integer .
+ds:CavernaBoard			rdf:type		:CompGameBoard ;
+					:hasCount		"41"^^xsd:integer .
+
+
+ds:Stratego
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/1917/stratego> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:MultiPlayGame;	
+	:hasType	:MemoryGame;
+	:hasType	:WarGame;
+	:hasType	:AnimalsGame;
+	:hasType	:AgeOfReasonGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeduction;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechSquareGridBoard;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechStatCheckResolution;
+
+	:hasPart 	ds:StrategoBoard ;
+	:hasPart	ds:StrategoToken ;
+
+	:hasMinimumTime "45"^^xsd:integer ;
+	:hasMaximumTime "45"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "2"^^xsd:integer ; 
+	:hasMinimumAge "8"^^xsd:integer .
+
+ds:StrategoToken 	rdf:type		:CompTokens ;
+				:hasCount		"80"^^xsd:integer .
+ds:StrategoBoard		rdf:type		:CompGameBoard ;
+				:hasCount		"1"^^xsd:integer .
+
+
+ds:PandemicLegacy
+	
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/161936/pandemic-legacy-season-1> ;
+
+rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:MultiPlayGame;	
+	:hasType	:LegacyGame;
+	:hasType	:MedicalGame;
+	:hasType	:CooperativeGame;
+	:hasType	:ScienceGame;
+:hasType	:ScenarioGame;
+:hasType	:CampaignGame;	
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechActionPoints;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariablePlayerPowers;
+	
+	:hasPart 	ds:PandemicBoard ;
+	:hasPart	ds:PandemicToken ;
+	:hasPart	ds:PandemicChip;
+	:hasPart	ds:PandemicMeeple;
+	:hasPart	ds:PandemicCard;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "60"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "4"^^xsd:integer ; 
+	:hasMinimumAge "13"^^xsd:integer .
+
+ds:PandemicCard		rdf:type		:CompCards ;
+				:hasCount		"184"^^xsd:integer .
+ds:PandemicMeeple	rdf:type		:CompMeeples ;
+				:hasCount		"4"^^xsd:integer .
+ds:PandemicToken		rdf:type		:CompTokens ;
+				:hasCount		"96"^^xsd:integer .
+ds:PandemicChip		rdf:type		:CompChips ;
+				:hasCount		"6"^^xsd:integer .
+ds:PandemicBoard		rdf:type		:CompGameBoard ;
+				:hasCount		"1"^^xsd:integer .
+
+
+ds:BetrayalAtHouseOnAHill
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/10547/betrayal-at-house-on-the-hill> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:MultiPlayGame;	
+	:hasType	:CooperativeGame;
+:hasType	:DeductionGame;
+:hasType	:TilePlacementGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechAsymmetricRoles;
+	:hasMechanic	:MechSquareGridBoard;
+	:hasMechanic	:MechTilePlacement;
+	:hasMechanic	:MechNarrativeChoice;
+	:hasMechanic	:MechStorytelling;
+	:hasMechanic	:MechInduction;
+	:hasMechanic	:MechAlliances;	
+
+	:hasPart 	ds:BetrayalDice ;
+	:hasPart	ds:BetrayalCard ;
+	:hasPart	ds:BetrayalToken;
+	:hasPart	ds:BetrayalChip;
+	:hasPart	ds:BetrayalBoard ;
+	:hasPart	ds:BetrayalMiniature ;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "60"^^xsd:integer ;
+	:hasMinimumPlayers "3"^^xsd:integer ;
+	:hasMaximumPlayers "6"^^xsd:integer ; 
+	:hasMinimumAge "12"^^xsd:integer .
+
+ds:BetrayalDice		rdf:type		:CompDice ;
+				:hasCount		"8"^^xsd:integer .
+ds:BetrayalCard		rdf:type		:CompCards ;
+				:hasCount		"86"^^xsd:integer .
+ds:BetrayalToken		rdf:type		:CompTokens ;
+				:hasCount		"149"^^xsd:integer .
+ds:BetrayalChip		rdf:type		:CompChips ;
+				:hasCount		"1"^^xsd:integer .
+ds:BetrayalBoard		rdf:type		:CompGameBoard ;
+				:hasCount		"45"^^xsd:integer .
+ds:BetrayalMiniature	rdf:type		:CompMiniatures ;
+				:hasCount		"6"^^xsd:integer .
+
+
+ds:Dominion
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/36218/dominion> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:MultiPlayGame;	
+	:hasType	:CardGame;
+	:hasType	:CityBuildingGame;
+	:hasType	:MedievalGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeckBuilding;
+	:hasMechanic	:MechOpenDrafting;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechDelayedPurchase;
+	:hasMechanic	:MechHandManagement;
+
+	:hasPart	ds:DominionCard;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "30"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "4"^^xsd:integer ; 
+	:hasMinimumAge "13"^^xsd:integer .
+
+ds:DominionCard	rdf:type		:CompCards ;
+			:hasCount		"500"^^xsd:integer .
+
+
+
+
+ds:Risk
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/181/risk> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:WarGame;
+	:hasType	:TerritoryBuildingGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDeduction;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechPlayerElimination;
+	:hasMechanic	:MechSetCollection;
+
+
+	:hasPart 	ds:RiskBoard ;
+	:hasPart	ds:RiskCard ;
+	:hasPart	ds:RiskMiniatures;
+
+	:hasMinimumTime "120"^^xsd:integer ;
+	:hasMaximumTime "120"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "6"^^xsd:integer ; 
+	:hasMinimumAge "10"^^xsd:integer .
+
+ds:RiskCard	rdf:type		:CompCards ;
+			:hasCount		"68"^^xsd:integer .
+ds:RiskBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"1"^^xsd:integer .
+ds:RiskMiniatures	rdf:type		:CompMiniatures ;
+				:hasCount		"300"^^xsd:integer .
+
+
+ds:TwilightImperiumFourthEdition
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/233078/twilight-imperium-fourth-edition> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:WarGame;
+	:hasType	:CivilizationGame;
+	:hasType	:EconomicGame;
+	:hasType	:PoliticalGame;
+	:hasType	:ScienceFictionGame;
+	:hasType	:SpaceExplorationGame;
+	:hasType	:NegotiationGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechActionDrafting;
+	:hasMechanic	:MechImpulseMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechHexagonGrid;
+	:hasMechanic	:MechIncreaseValueUnchosenResources;
+	:hasMechanic	:MechKingOfTheHill;
+	:hasMechanic	:MechModularBoard;
+	:hasMechanic	:MechRacing;
+	:hasMechanic	:MechTechTrees;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechVariableTurnOrder;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechVoting;
+
+	:hasPart 	ds:TwilightImperiumFourthEditionBoard ;
+	:hasPart	ds:TwilightImperiumFourthEditionToken ;
+	:hasPart	ds:TwilightImperiumFourthEditionMiniatures;
+	:hasPart	ds:TwilightImperiumFourthEditionCard;
+	:hasPart	ds:TwilightImperiumFourthEditionDice;
+
+	:hasMinimumTime "240"^^xsd:integer ;
+	:hasMaximumTime "480"^^xsd:integer ;
+	:hasMinimumPlayers "3"^^xsd:integer ;
+	:hasMaximumPlayers "6"^^xsd:integer ; 
+	:hasMinimumAge "14"^^xsd:integer .
+
+ds:TwilightImperiumFourthEditionToken	rdf:type		:CompTokens ;
+					:hasCount		"714"^^xsd:integer .
+ds:TwilightImperiumFourthEditionCard	rdf:type		:CompCards ;
+					:hasCount		"462"^^xsd:integer .
+ds:TwilightImperiumFourthEditionBoard	rdf:type		:CompGameBoard ;
+					:hasCount		"51"^^xsd:integer .
+ds:TwilightImperiumFourthEditionMiniatures	rdf:type	:CompMiniatures ;
+					:hasCount		"354"^^xsd:integer .
+ds:TwilightImperiumFourthEditionDice	rdf:type		:CompDice ;
+					:hasCount		"8"^^xsd:integer .
+
+ds:UNO
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/2223/uno> ;
+
+rdf:type	:TabletopGame;
+
+	:hasType	:FamilyGame;
+	:hasType	:CardGame;
+	:hasType	:ChildrensGame;
+	:hasType	:NumberGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechLoseATurn;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechMatching;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechNumber;
+
+	:hasPart	ds:UNOCard;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "30"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "10"^^xsd:integer ; 
+	:hasMinimumAge "6"^^xsd:integer .
+
+ds:UNOCard	rdf:type		:CompCards ;
+		:hasCount		"112"^^xsd:integer .
+
+
+
+ds:Battleship
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/2425/battleship> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+:hasType	:ChildrensGame;
+:hasType	:NaturicalGame;
+	:hasType	:WarGame;
+	:hasType	:DeductionGame;
+	:hasType	:SecretUnitDeploymentGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:Deduction;
+
+	:hasPart	ds:BattleshipChip ;
+	:hasPart 	ds:BattleshipBoard ;
+	:hasPart	ds:BattleshipMiniatures ;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "30"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "2"^^xsd:integer ; 
+	:hasMinimumAge "8"^^xsd:integer .
+
+ds:BattleshipChip	rdf:type		:CompChips ;
+					:hasCount		"24"^^xsd:integer .
+ds:BattleshipBoard	rdf:type		:CompGameBoard ;
+					:hasCount		"1"^^xsd:integer .
+ds:BattleshipMiniatures	rdf:type		:CompMiniatures ;
+					:hasCount		"10"^^xsd:integer .
+
+
+ds:RisingSun
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/205896/rising-sun> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:BluffingGame;
+	:hasType	:FantasyGame;
+	:hasType	:MiniatureGame;
+	:hasType	:MythologyGame;
+	:hasType	:NegotiationGame;
+	:hasType	:WarGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechActionDrafting;
+	:hasMechanic	:MechAlliances;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechAuctionSealedBid;
+	:hasMechanic	:MechBettingBluffing;
+	:hasMechanic	:MechClosedDrafting;
+	:hasMechanic	:MechEndGameBonuses;
+	:hasMechanic	:MechFollowing;
+	:hasMechanic	:MechForceCommitment;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechSimultaneousActionSelection;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechVariablePhaseOrder;
+	:hasMechanic	:MechVariableSetup;
+
+	:hasPart 	ds:RisingSunBoard ;
+	:hasPart	ds:RisingSunToken ;
+	:hasPart	ds:RisingSunMiniatures ;
+	:hasPart	ds:RisingSunCard ;
+	:hasPart	ds:RisingSunMoney ;
+
+	:hasMinimumTime "90"^^xsd:integer ;
+	:hasMaximumTime "120"^^xsd:integer ;
+	:hasMinimumPlayers "3"^^xsd:integer ;
+	:hasMaximumPlayers "5"^^xsd:integer ; 
+	:hasMinimumAge "4"^^xsd:integer .
+
+ds:RisingSunToken	rdf:type		:CompTokens ;
+				:hasCount		"77"^^xsd:integer .
+ds:RisingSunCard		rdf:type		:CompCards ;
+				:hasCount		"52"^^xsd:integer .
+ds:RisingSunBoard	rdf:type		:CompGameBoard ;
+				:hasCount		"23"^^xsd:integer .
+ds:RisingSunMiniatures	rdf:type		:CompMiniatures ;
+				:hasCount		"58"^^xsd:integer .
+ds:RisingSunMoney	rdf:type		:CompMoney ;
+				:hasCount		"65"^^xsd:integer .
+
+
+ds:ROOT
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/237182/root> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:WarGame;
+	:hasType	:AnimalsGame;
+	:hasType	:FantasyGame;
+	:hasType	:NegotiationGame;
+	:hasType	:TerritoryBuildingGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechGaActionQueue;
+	:hasMechanic	:MechActionRetrieval;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechPointToPointMovement;
+	:hasMechanic	:MechRacing;
+	:hasMechanic	:MechSuddenDeathEnding;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
+
+	:hasPart 	ds:ROOTBoard ;
+	:hasPart	ds:ROOTMeeple ;
+	:hasPart	ds:ROOTCard ;
+	:hasPart	ds:ROOTDice ;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "90"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "4"^^xsd:integer ; 
+	:hasMinimumAge "10"^^xsd:integer .
+
+ds:ROOTCard	rdf:type		:CompCards ;
+			:hasCount		"89"^^xsd:integer .
+ds:ROOTMeeple	rdf:type		:CompMeeples ;
+			:hasCount		"56"^^xsd:integer .
+ds:ROOTBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"5"^^xsd:integer .
+ds:ROOTDice	rdf:type		:CompDice ;
+			:hasCount		"2"^^xsd:integer .
+
+ds:Dune
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/283355/dune> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:WarGame;
+	:hasType	:NovelBasedGame;
+	:hasType	:PoliticalGame;
+	:hasType	:ScienceFictionGame;
+	:hasType	:BluffingGame;
+	:hasType	:FightingGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAlliances;
+	:hasMechanic	:MechAreaInfluence;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechForceCommitment;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechMapDeformation;
+	:hasMechanic	:MechTeamBasedGame;
+	:hasMechanic	:MechVariablePlayerPowers;
+
+	:hasPart 	ds:DuneBoard ;
+	:hasPart	ds:DuneToken ;
+	:hasPart	ds:DuneCard ;
+	:hasPart	ds:DuneChip ;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "180"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "6"^^xsd:integer ; 
+	:hasMinimumAge "12"^^xsd:integer .
+
+ds:DuneToken	rdf:type		:CompTokens ;
+			:hasCount		"120"^^xsd:integer .
+ds:DuneCard	rdf:type		:CompCards ;
+			:hasCount		"65"^^xsd:integer .
+ds:DuneChip	rdf:type		:CompChips ;
+			:hasCount		"159"^^xsd:integer .
+ds:DuneBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"1"^^xsd:integer .
+
+
+ds:Archipelago
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/105551/archipelago> ;
+
+rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:CivilizationGame;
+	:hasType	:EconomicGame;
+	:hasType	:ExplorationGame;
+	:hasType	:NauticalGame;
+	:hasType	:NegotiationGame;
+	:hasType	:RenaissanceGame;
+	:hasType	:SemiCooperativeGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAuctionSealedBid;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechBribery;
+	:hasMechanic	:MechCommoditySpeculation;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechHexagonGrid;
+	:hasMechanic	:MechMapAddition;
+	:hasMechanic	:MechMarket;
+	:hasMechanic	:MechModularBoard;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechTilePlacement;
+	:hasMechanic	:MechTrading;
+	:hasMechanic	:MechBetrayal;
+	:hasMechanic	:MechWorkerPlacement;
+
+	:hasPart 	ds:ArchipelagoBoard ;
+	:hasPart	ds:ArchipelagoMeeple ;
+	:hasPart	ds:ArchipelagoCard ;
+	:hasPart	ds:ArchipelagoMoney ;
+	:hasPart	ds:ArchipelagoChip ;
+	:hasPart	ds:ArchipelagoToken ;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "240"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "5"^^xsd:integer ; 
+	:hasMinimumAge "14"^^xsd:integer .
+
+ds:ArchipelagoToken	rdf:type		:CompTokens ;
+				:hasCount		"26"^^xsd:integer .
+ds:ArchipelagoCard	rdf:type		:CompCards ;
+				:hasCount		"90"^^xsd:integer .
+ds:ArchipelagoMeeple	rdf:type		:CompMeeples ;
+				:hasCount		"3"^^xsd:integer .
+ds:ArchipelagoChip	rdf:type		:CompChips ;
+				:hasCount		"182"^^xsd:integer .
+ds:ArchipelagoBoard	rdf:type		:CompGameBoard ;
+				:hasCount		"29"^^xsd:integer .
+ds:ArchipelagoMoney	rdf:type		:CompMoney ;
+				:hasCount		"51"^^xsd:integer .
+
+
+ds:Monopoly
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/1406/monopoly> ;
+
+rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:FamilyGame;
+	:hasType	:EconomicGame;
+	:hasType	:NegotiationGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAuctionBidding;
+	:hasMechanic	:MechLoans;
+	:hasMechanic	:MechLoseATurn;
+	:hasMechanic	:MechOwnership;
+	:hasMechanic	:MechPlayerElimination;
+	:hasMechanic	:MechRollSpinAndMove;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechStockHolding;
+	:hasMechanic	:MechTrackMovement;
+	:hasMechanic	:MechTrading;
+
+	:hasPart 	ds:MonopolyBoard ;
+	:hasPart	ds:MonopolyChip ;
+	:hasPart	ds:MonopolyCard ;
+	:hasPart	ds:MonopolyMoney ;
+	:hasPart	ds:MonopolyToken ;
+	:hasPart	ds:MonopolyDice ;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "180"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "8"^^xsd:integer ; 
+	:hasMinimumAge "8"^^xsd:integer .
+
+ds:MonopolyToken	rdf:type		:CompTokens ;
+			:hasCount		"56"^^xsd:integer .
+ds:MonopolyCard	rdf:type		:CompCards ;
+			:hasCount		"60"^^xsd:integer .
+ds:MonopolyChip	rdf:type		:CompChips ;
+			:hasCount		"12"^^xsd:integer .
+ds:MonopolyBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"1"^^xsd:integer .
+ds:MonopolyDice	rdf:type		:CompDice ;
+			:hasCount		"2"^^xsd:integer .
+ds:MonopolyMoney	rdf:type		:CompMoney ;
+			:hasCount		"240"^^xsd:integer .
+
+ds:StarWarsRebellion
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/187645/star-wars-rebellion> ;
+
+	rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:WarGame;
+	:hasType	:CivilWarGame;
+	:hasType	:MiniatureGame;
+	:hasType	:MoviesTheme;
+	:hasType	:ScienceFictionGame;
+	:hasType	:SpaceExplorationGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechAreaMovement;
+	:hasMechanic	:MechAreaImpulse;
+	:hasMechanic	:MechCardPlayConflictResolution;
+	:hasMechanic	:MechContracts;
+	:hasMechanic	:MechDelayedPurchase;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechDieIconResolution;
+	:hasMechanic	:MechEvents;
+	:hasMechanic	:MechHandManagement;
+	:hasMechanic	:MechHiddenMovement;
+	:hasMechanic	:MechIncome;
+	:hasMechanic	:MechOncePerGameAbilities;
+	:hasMechanic	:MechTags;
+	:hasMechanic	:MechTakeThat;
+	:hasMechanic	:MechTeamBasedGame;
+	:hasMechanic	:MechVariablePlayerPowers;
+	:hasMechanic	:MechVariableSetup;
+	:hasMechanic	:MechWorkerPlacement;
+	:hasMechanic	:MechDifferentWorkerTypes;
+
+	:hasPart 	ds:StarWarsRebellionBoard ;
+	:hasPart	ds:StarWarsRebellionChip ;
+	:hasPart	ds:StarWarsRebellionMiniatures ;
+	:hasPart	ds:StarWarsRebellionCard ;
+	:hasPart	ds:StarWarsRebellionDice ;
+
+	:hasMinimumTime "180"^^xsd:integer ;
+	:hasMaximumTime "240"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "4"^^xsd:integer ; 
+	:hasMinimumAge "14"^^xsd:integer .
+
+ds:StarWarsRebellionCard	rdf:type		:CompCards ;
+					:hasCount		"178"^^xsd:integer .
+ds:StarWarsRebellionChip	rdf:type		:CompChips ;
+					:hasCount		"84"^^xsd:integer .
+ds:StarWarsRebellionBoard	rdf:type		:CompGameBoard ;
+					:hasCount		"2"^^xsd:integer .
+ds:StarWarsRebellionMiniatures	rdf:type		:CompMiniatures ;
+					:hasCount		"153"^^xsd:integer .
+ds:StarWarsRebellionDice	rdf:type		:CompDice ;
+					:hasCount		"10"^^xsd:integer .
+
+
+
+
+ds:Genoa
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/1345/genoa> ;
+
+rdf:type	:TabletopGame;
+
+	:hasType	:BoardGame;
+	:hasType	:MultiPlayGame;	
+	:hasType	:NegotiationGame;
+:hasType	:RenaissanceGame;
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:GameMechanic;
+	:hasMechanic	:MechDiceRolling;
+	:hasMechanic	:MechBribery;
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechNegotiation;
+	:hasMechanic	:MechPickupAndDeliver;
+	:hasMechanic	:MechSetCollection;
+	:hasMechanic	:MechTrading;
+
+
+	:hasPart 	ds:GenoaBoard ;
+	:hasPart	ds:GenoaChip ;
+	:hasPart	ds:GenoaCard ;
+	:hasPart	ds:GenoaDice ;
+	:hasPart	ds:GenoaMoney ;
+
+	:hasMinimumTime "60"^^xsd:integer ;
+	:hasMaximumTime "120"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "5"^^xsd:integer ; 
+	:hasMinimumAge "12"^^xsd:integer .
+
+ds:GenoaCard	rdf:type		:CompCards ;
+			:hasCount		"60"^^xsd:integer .
+ds:GenoaChip	rdf:type		:CompChips ;
+			:hasCount		"41"^^xsd:integer .
+ds:GenoaBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"73"^^xsd:integer .
+ds:GenoaDice	rdf:type		:CompDice ;
+			:hasCount		"2"^^xsd:integer .
+ds:GenoaMoney	rdf:type		:CompMoney ;
+			:hasCount		"80"^^xsd:integer .
+
+
+ds:Chess
+
+	rdfs:seeAlso	<https://boardgamegeek.com/boardgame/171/chess> ;
+
+rdf:type		:TabletopGame;
+
+	:hasType		:BoardGame;
+	:hasType		:AbstractGame;
+
+
+	:hasFunction	:GameObjectives;
+
+	:hasMechanic	:MechGridMovement;
+	:hasMechanic	:MechOncePerGameAbilities;
+	:hasMechanic	:MechPatternMovement;
+	:hasMechanic	:MechSquareGridBoard;
+	:hasMechanic	:MechSuddenDeathEnding;
+
+	:hasPart 	ds:ChessBoard ;
+	:hasPart	ds:ChessPieces ;
+
+	:hasMinimumTime "30"^^xsd:integer ;
+	:hasMaximumTime "30"^^xsd:integer ;
+	:hasMinimumPlayers "2"^^xsd:integer ;
+	:hasMaximumPlayers "2"^^xsd:integer ; 
+	:hasMinimumAge "6"^^xsd:integer .
+
+
+ds:ChessBoard	rdf:type		:CompGameBoard ;
+			:hasCount		"1"^^xsd:integer .
+ds:ChessPieces	rdf:type		:CompMiniatures ;
+			:hasCount		"32"^^xsd:integer .
+
+
+

@@ -1,0 +1,952 @@
+@prefix : <https://example.org/SIE580/tabletop/#> .
+@prefix game: <https://example.org/SIE580/tabletop/#> .
+@prefix ds: <http://example.org/SIE580/tabletop/dataset#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# Ontology metadata
+@prefix dct: <http://purl.org/dc/terms/> .
+:TabletopGameOntology rdf:type owl:Ontology ;
+dct:title "Tabletop Game Ontology" ;
+dct:description "An ontology describing the relationships between tabletop games" ;
+dct:creator "Chris Green and Tim Stonesifer" ;
+dct:created "2024-05-01"^^xsd:date ;
+dct:modified "2024-05-01"^^xsd:date ;
+dct:license <http://creativecommons.org/licenses/by/4.0/> ;
+dct:provenance "Created for UMaine SIE580, Spring 2024, Ontology Engineering" ;
+owl:versionInfo "Version 1.0" .
+
+
+###################################
+#    Class Restrictions   #
+###################################
+
+
+#:ChildGame			owl:disjointWith		:AdultGame .
+#:SinglePlayerGame	owl:disjointWith		:MultiPlayGame .
+:PartyGame			owl:disjointWith		:SinglePlayerGame .
+:ofGameType		owl:disjointWith		:hasType .
+
+
+:TabletopGame	rdfs:subClassOf [ 
+rdf:type owl:Restriction ;
+owl:onProperty	:hasPart ;
+	owl:minCardinality "1"^^xsd:nonNegativeInteger ] .
+
+:TabletopGame	rdfs:subClassOf [ 
+rdf:type owl:Restriction ;
+	owl:onProperty	:hasMechanic ;
+	owl:minCardinality "1"^^xsd:nonNegativeInteger ] .
+
+:TabletopGame	rdfs:subClassOf [ 
+rdf:type owl:Restriction ;
+	owl:onProperty	:hasFunction ;
+	owl:minCardinality "1"^^xsd:nonNegativeInteger ] .
+
+:TabletopGame	rdfs:subClassOf [ 
+rdf:type owl:Restriction ;
+	owl:onProperty	:hasType ;
+	owl:minCardinality "1"^^xsd:nonNegativeInteger ] .
+
+
+:ShortTwoPlayerGame owl:EquivalentClass [
+    owl:intersectionOf (
+        :TabletopGame 
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMinimumPlayers ;
+          owl:qualifiedCardinality "2" ]
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMaximumTime ;
+          owl:maxQualifiedCardinality "30" ]
+    )
+] .
+
+:OnlyTwoPlayerGame owl:EquivalentClass [
+    owl:intersectionOf (
+        :TabletopGame 
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMinimumPlayers ;
+          owl:hasValue "2" ]
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMaximumPlayers ;
+          owl:hasValue "2" ]
+    )
+] .
+
+:LongComplexGame owl:EquivalentClass [
+    owl:intersectionOf (
+        :TabletopGame 
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMinimumTime ;
+          owl:minQualifiedCardinality "120" ]
+        [ rdf:type owl:Restriction ;
+          owl:onProperty :hasMechanic ;
+          owl:cardinality "10" ]
+    )
+] .
+
+
+
+###CivBuildGame must have MechCivBuilding
+
+game:CivBuildGame rdf:type owl:Class ;
+                  owl:equivalentClass [ rdf:type owl:Restriction ;
+                                        owl:onProperty game:hasMechanic ;
+                                        owl:someValuesFrom game:MechCivBuilding
+                                      ] ;
+                  rdfs:subClassOf game:TabletopGame .
+
+
+###AdultGame must have minimum age 14, and disjoints with ChildGame
+
+game:AdultGame rdf:type owl:Class ;
+               owl:equivalentClass [ rdf:type owl:Restriction ;
+                                     owl:onProperty game:hasMinimumAge ;
+                                     owl:minQualifiedCardinality "14"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:integer
+                                   ] ;
+               rdfs:subClassOf game:TabletopGame ;
+               owl:disjointWith game:ChildGame .
+
+###ChildGame must have MinimumAge 8
+
+game:ChildGame rdf:type owl:Class ;
+               owl:equivalentClass [ rdf:type owl:Restriction ;
+                                     owl:onProperty game:hasMinimumAge ;
+                                     owl:maxQualifiedCardinality "8"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:integer
+                                   ] ;
+               rdfs:subClassOf game:TabletopGame .
+
+
+###CollCompGame must have minimum 2 players
+
+game:CollCompGame rdf:type owl:Class ;
+                  owl:equivalentClass [ rdf:type owl:Restriction ;
+                                        owl:onProperty game:hasMinimumPlayers ;
+                                        owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                        owl:onDataRange xsd:integer
+                                      ] ;
+                  rdfs:subClassOf game:TabletopGame .
+
+###FamilyGame must have minimum players 2 and minimum age 10 or less
+
+game:FamilyGame rdf:type owl:Class ;
+                owl:equivalentClass [ rdf:type owl:Restriction ;
+                                      owl:onProperty game:hasMinimumPlayers ;
+                                      owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:integer
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty game:hasMinimumAge ;
+                                      owl:maxQualifiedCardinality "10"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:integer
+                                    ] ;
+                rdfs:subClassOf game:TabletopGame .
+
+
+### MultiPlayGame is equivalent to a class with minimum players: 2, and disjoints with SinglePlayerGame
+
+game:MultiPlayGame rdf:type owl:Class ;
+                   owl:equivalentClass [ rdf:type owl:Restriction ;
+                                         owl:onProperty game:hasMinimumPlayers ;
+                                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                         owl:onDataRange xsd:integer
+                                       ] ;
+                   rdfs:subClassOf game:TabletopGame ;
+                   owl:disjointWith game:SinglePlayerGame .
+
+
+##SinglePlayerGame is equivalent to a class with maximum players 1
+
+game:SinglePlayerGame rdf:type owl:Class ;
+                      owl:equivalentClass [ rdf:type owl:Restriction ;
+                                            owl:onProperty game:hasMaximumPlayers ;
+                                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                            owl:onDataRange xsd:integer
+                                          ] ;
+                      rdfs:subClassOf game:TabletopGame .
+
+
+
+###########################
+#    Class Definitions    #
+###########################
+
+:TabletopGame 	rdf:type	owl:Class.
+
+:GameType				rdf:type		owl:Class ;
+					rdfs:label		"Game Type" ;
+					rdfs:comment	"Category defining the style of a game" .
+:TypeMechanicalClustering	rdfs:subClassOf	:GameType ;
+					rdfs:label		"Mechanical Clustering Type" ;
+rdfs:comment	"Type of tabletop game defined by the mechanical functions within the game rules" .
+:TypeThematicClustering	rdfs:subClassOf	:GameType ;
+					rdfs:label		"Thematic Clustering Type" ;
+					rdfs:comment	"Type of tabletop game defined by the thematic elements experienced while playing the game" . 
+:TypeComponentClustering	rdfs:subClassOf	:GameType ;
+					rdfs:label		"Component Clustering Type" ;
+					rdfs:comment	"Type of tabletop game defined by the components used to play the game" .
+:TypePlayerClustering		rdfs:subClassOf	:GameType ;
+					rdfs:label		"Player Clustering Type" ;
+					rdfs:comment	"Type of tabletop game defined by the kinds of players within the game audience or playerbase" .
+:TypeMetaClustering		rdfs:subClassOf	:GameType ;
+					rdfs:label		"Meta Clustering Type" ;
+					rdfs:comment	"Type of tabletop game defined by the involvement of rules which transcend individual games and carry gamestates , conditions, or rules over from game to game" .
+
+
+
+:AbstractGame  rdf:type       owl:Class ;
+				rdfs:label		"Abstract Game" ;
+				rdfs:comment	"Abstract game type" ;
+ 				rdfs:subClassOf :TabletopGame;
+                     	owl:disjointWith :TypeThematicClustering.
+
+
+### MetaClustering
+
+:LegacyGame	rdf:type		owl:Class;
+			rdfs:label		"Legacy Game" ;
+			rdfs:comment	"Legacy game type" ;
+			:ofGameType	:TypeMetaClustering;
+			rdfs:subClassOf	:TabletopGame .
+:ScenarioGame	rdf:type		owl:Class;
+			rdfs:label		"Scenario Game" ;
+			rdfs:comment	"Scenario game type" ;
+			:ofGameType	:TypeMetaClustering;
+			rdfs:subClassOf	:TabletopGame . 
+:CampaignGame	rdf:type		owl:Class;
+			rdfs:label		"Campaign Game" ;
+			rdfs:comment	"Campaign game type" ;
+			:ofGameType	:TypeMetaClustering;
+			rdfs:subClassOf	:TabletopGame .
+
+
+#### SubClasses of Component Clustering
+# These represent physical elements that are a part of a game
+
+:BoardGame		rdf:type		owl:Class;
+			rdfs:label		"Board Game" ;
+			rdfs:comment	"Board game type — A game primarily defined by its use of a physical game board" ;
+			rdfs:subClassOf	:TabletopGame ;
+			:ofGameType	:TypeComponentClustering .
+:DiceGame		rdf:type		owl:Class;
+			rdfs:label		"Dice Game" ;
+			rdfs:comment	"Dice game type — A game primarily defined by its use of dice" ;
+			rdfs:subClassOf	:TabletopGame ;
+			:ofGameType	:TypeComponentClustering .
+:MiniatureGame	rdf:type		owl:Class;
+			rdfs:label		"Miniature Game" ;
+			rdfs:comment	"Miniature game type — A game primarily defined by its use of miniatures" ;
+			rdfs:subClassOf	:TabletopGame ;
+			:ofGameType	:TypeComponentClustering .
+:CardGame		rdf:type		owl:Class;
+			rdfs:label		"Card Game" ;
+			rdfs:comment	"Card game type — A game primarily defined by its use of cards" ;
+			rdfs:subClassOf	:TabletopGame ;
+			:ofGameType	:TypeComponentClustering .
+:CollCompGame	rdf:type		owl:Class;
+			rdfs:label		"Collectible Component Game" ;
+			rdfs:comment	"Collectible component game type — A game primarily defined by its use of collectible components" ;
+			rdfs:subClassOf	:TabletopGame ;
+			:ofGameType	:TypeComponentClustering .
+
+#### SubClasses of Mechanical Clustering
+:DeductionGame	rdf:type		owl:Class;
+			rdfs:label		"Deduction Game" ;
+			rdfs:comment	"A game that uses deductive reasoning" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:RacingGame	rdf:type		owl:Class;
+			rdfs:label		"Racing Game" ;
+			rdfs:comment	"A game which has an element of racing" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:CivBuildGame	rdf:type		owl:Class;
+			rdfs:label		"Civilization Building Game" ;
+			rdfs:comment	"A game which builds worlds and civilizations" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:FarmingGame	rdf:type		owl:Class;
+			rdfs:label		"Farming Game" ;
+			rdfs:comment	"A game which has a farming element" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:TradingGame	rdf:type		owl:Class;
+			rdfs:label		"Trading Game" ;
+			rdfs:comment	"A game which involves the exchange of goods" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:WorkerPlacementGame	rdf:type		owl:Class;
+			rdfs:label		"Worker Placement Game" ;
+			rdfs:comment	"A game where players select one action at a time" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:BluffingGame	rdf:type		owl:Class;
+			rdfs:label		"Bluffing Game" ;
+			rdfs:comment	"A game which utilizes deception" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:CityBuildingGame	rdf:type		owl:Class;
+			rdfs:label		"City Building Game" ;
+			rdfs:comment	"A game which focuses on the development of a city" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+
+:CooperativeGame	rdf:type		owl:Class;
+			rdfs:label		"Cooperative Game" ;
+			rdfs:comment	"A game where players work together towards a common goal" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:EconomicGame	rdf:type		owl:Class;
+			rdfs:label		"Economic Game" ;
+			rdfs:comment	"A game which utilizes money and finances" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:ExplorationGame	rdf:type		owl:Class;
+			rdfs:label		"Exploration Game" ;
+			rdfs:comment	"A game that emphasizes the uncovering of an environment" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:FightingGame	rdf:type		owl:Class;
+			rdfs:label		"Fighting Game" ;
+			rdfs:comment	"A game which sees direct conflict between characters" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:LegacyGame	rdf:type		owl:Class;
+			rdfs:label		"Legacy Game" ;
+			rdfs:comment	"A game which carries elements from one gaming session into the next" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MemoryGame	rdf:type		owl:Class;
+			rdfs:label		"Memory Game" ;
+			rdfs:comment	"A game requiring the player remember certain aspects" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:NegotiationGame	rdf:type		owl:Class;
+			rdfs:label		"Negotiation Game" ;
+			rdfs:comment	"A game that has players making deals and alliances" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:NumberGame	rdf:type		owl:Class;
+			rdfs:label		"Number Game" ;
+			rdfs:comment	"A game that emphasizes the use of numeric systems" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:PoliticalGame	rdf:type		owl:Class;
+			rdfs:label		"Political Game" ;
+			rdfs:comment	"A game that provides simulation of government" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:ScenarioGame	rdf:type		owl:Class;
+			rdfs:label		"Scenario Game" ;
+			rdfs:comment	"A game that requires players to resolve a problem or situation" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:SecretUnitDeploymentGame	rdf:type		owl:Class;
+			rdfs:label		"Secret Unit Deployment Game" ;
+			rdfs:comment	"A game where there is a hidden unit" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:SemiCooperativeGame	rdf:type		owl:Class;
+			rdfs:label		"Semi-Cooperative Game" ;
+			rdfs:comment	"A game that has aspects of a cooperative game" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:TerritoryBuildingGame	rdf:type		owl:Class;
+			rdfs:label		"Territory Building Game" ;
+			rdfs:comment	"A game where regions are expanded" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+:TilePlacementGame	rdf:type		owl:Class;
+			rdfs:label		"Tile Placement Game" ;
+			rdfs:comment	"A game where tile pieces are arranged on the board" ;
+			:ofGameType	:TypeMechanicalClustering;
+			rdfs:subClassOf	:TabletopGame .
+
+
+
+#### SubClasses of Player Clustering
+:ChildGame		rdf:type		owl:Class;
+			rdfs:label		"Child Game" ;
+			rdfs:comment	"A game designed for children" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MultiPlayGame	rdf:type		owl:Class;
+			rdfs:label		"Multiplayer Game" ;
+			rdfs:comment	"A game that requires multiple human players" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:PartyGame		rdf:type		owl:Class;
+			rdfs:label		"Party Game" ;
+			rdfs:comment	"A casual game designed for many players" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:SinglePlayerGame	rdf:type		owl:Class;
+				rdfs:label		"Single Player Game" ;
+				rdfs:comment	"A game for one player" ;
+				:ofGameType	:TypePlayerClustering;
+				rdfs:subClassOf	:TabletopGame .
+:AdultGame		rdf:type		owl:Class;
+			rdfs:label		"Adult Game" ;
+			rdfs:comment	"A game for adults" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:FamilyGame	rdf:type		owl:Class;
+			rdfs:label		"Family Game" ;
+			rdfs:comment	"A game that is intended to be played by families with a wide range of ages" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:CooperativeGame	rdf:type		owl:Class;
+			rdfs:label		"Cooperative Game" ;
+			rdfs:comment	"A game that requires players to work together" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+:SemiCooperativeGame	rdf:type		owl:Class;
+			rdfs:label		"Semi-Cooperative Game" ;
+			rdfs:comment	"A game that has aspects of a cooperative game" ;
+			:ofGameType	:TypePlayerClustering;
+			rdfs:subClassOf	:TabletopGame .
+
+#### SubClasses of Thematic Clustering
+:AgeOfReasonGame	rdf:type		owl:Class;
+			rdfs:label		"Age of Reason Game" ;
+			rdfs:comment	"A game set in the age of enlightenment" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:AnimalsGame	rdf:type		owl:Class;
+			rdfs:label		"Animals Game" ;
+			rdfs:comment	"A game that has animals" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:CivilizationGame	rdf:type		owl:Class;
+			rdfs:label		"Civilization Game" ;
+			rdfs:comment	"A game using civilizations" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:CivilWarGame	rdf:type		owl:Class;
+			rdfs:label		"Civil War Game" ;
+			rdfs:comment	"A game that takes place during the civil war" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:FantasyGame	rdf:type		owl:Class;
+			rdfs:label		"Fantasy Game" ;
+			rdfs:comment	"A game that uses fantasy elements" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MedicalGame	rdf:type		owl:Class;
+			rdfs:label		"Medical Game" ;
+			rdfs:comment	"A game that uses medical concepts" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MedievalGame	rdf:type		owl:Class;
+			rdfs:label		"Medieval Game" ;
+			rdfs:comment	"A game set in medieval times" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MoviesTheme	rdf:type		owl:Class;
+			rdfs:label		"Movies Theme" ;
+			rdfs:comment	"A game that references movies" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:MythologyGame	rdf:type		owl:Class;
+			rdfs:label		"Mythology Game" ;
+			rdfs:comment	"A game that has elements of mythology" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:NaturicalGame	rdf:type		owl:Class;
+			rdfs:label		"Naturical Game" ;
+			rdfs:comment	"A game centered on nature and natural elements" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:NovelBasedGame	rdf:type		owl:Class;
+			rdfs:label		"Novel Based Game" ;
+			rdfs:comment	"A game that references novels" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:RenaissanceGame	rdf:type		owl:Class;
+			rdfs:label		"Renaissance Game" ;
+			rdfs:comment	"A game set in renaissance time" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:ScienceFictionGame	rdf:type		owl:Class;
+			rdfs:label		"Science Fiction Game" ;
+			rdfs:comment	"A game with sci-fi elements" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:ScienceGame	rdf:type		owl:Class;
+			rdfs:label		"Science Game" ;
+			rdfs:comment	"A game which uses scientific principles" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:SpaceExplorationGame	rdf:type		owl:Class;
+			rdfs:label		"Space Exploration Game" ;
+			rdfs:comment	"A game that travels through outer space" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+:WarGame	rdf:type		owl:Class;
+			rdfs:label		"War Game" ;
+			rdfs:comment	"A game that has elements related to war" ;
+			:ofGameType	:TypeThematicClustering;
+			rdfs:subClassOf	:TabletopGame .
+
+#### Game Characteristics
+:PhysicalComponents	rdf:type		owl:Class ;
+rdfs:label		"Physical Components" .
+:GameMechanic		rdf:type		owl:Class ;
+rdfs:label		"Game Mechanic" .
+:GameplayFunctions	rdf:type		owl:Class ;
+rdfs:label		"Gameplay Functions" .
+
+
+#### Game Processes / Mechanics
+	
+:MechMovingComponents	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Components may be moved around the game board" .
+:MechCoopInteraction	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players are offered ways to cooperate to achieve goals" .
+:MechDrafting		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players sequentially select from an assortment of actions in a pool" .
+:MechDiceRolling		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players roll dice to decide the outcome of events" .
+:MechEconomy	rdf:type		owl:Class;
+			rdfs:subClassOf	:GameMechanic;
+			rdfs:comment	"Game features an economy which allows for objects and resources with an in-game monetary value" .
+
+:MechAuctions		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechEconomy;
+				rdfs:comment	"Game features an auction system which decides events based on a player-interactive event utilizing objects or resources with value" .
+:MechAuctionBidding	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechAuctions;
+				rdfs:comment		"Players take turns bidding on an object, with the highest bidder winning the auction" .
+:MechAuctionSealedBid		rdf:type		owl:Class;
+					rdfs:subClassOf	:MechAuctions;
+					rdfs:comment		"Players secretly make bids, and then the bids are revealed, with the highest bidder winning the auction" .
+:MechCommoditySpeculation	rdf:type		owl:Class;
+					rdfs:subClassOf	:MechEconomy;
+					rdfs:comment	"Players buy and sell commodities of various types and quantities as they change value throughout the game" .
+:MechIncome		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechEconomy;
+				rdfs:comment	"Players periodically gain resources at defined times" .
+:MechLoans			rdf:type		owl:Class;
+				rdfs:subClassOf	:MechEconomy;
+				rdfs:comment	"Players may take a Loan from the bank to get more money." .
+:MechMarket		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechEconomy;
+				rdfs:comment	"Players may buy from or sell resources to Markets, where prices and quantities can vary" .
+
+:MechActionDrafting	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechDrafting;
+				rdfs:comment	"Players select from an assortment of Actions in a shared pool. The available Actions are limited in quantity, and once a player has chosen an Action it may not be chosen again" .
+:MechActionPoints	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"A player receives a number of Action Points or Operation Points on their turn. They may spend them on a variety of Actions" .
+:MechActionQueue		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players create Action Queues and perform them in sequence" .
+:MechActionRetrieval	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Each player has a set of Actions available to them, embodied in cards, tokens, or some other affordance. Once performed, they are spent and may not be performed again until retrieved" .
+:MechAlliances		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players have formal cooperative relationships that may change over the course of the game" .
+:MechAreaImpulse		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players subdivide turns into impulses alternating between players which repeat until both players pass. In those impulses a group of units is once activated or gets to act collectively" .
+:MechAreaInfluence	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Multiple players may occupy a space and gain benefits based on their proportional presence in the space" .
+
+:MechAsymmetricRoles	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"One or more players are secretly assigned roles at the start of the game which have different win conditions" .
+
+:MechAutomaticResourceGrowth	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+						rdfs:comment	"The automatic increase of a resource triggered by a particular, conditional, deterministic (not random) game state" .
+:MechBetrayal		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players are allowed to change team alignment mid-game against their former allies" .
+:MechBettingBluffing	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechBluffing ;
+				rdfs:comment	"Players commit a stake of currency or resources to purchase a chance of winning everyone’s stake, based on some random outcome like being dealt a superior set of cards or rolling a higher number" .
+:MechBluffing	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players may intentionally misrepresent their status or position in order to deceive other players" .
+:MechBribery		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players offer bribes to other players to get them to perform specific actions" .
+:MechCardPlayConflictResolution	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+						rdfs:comment	"Each player simultaneously or sequentially plays one or more cards. These modify the base outcome of a conflict and allow various special abilities to apply" .
+:MechCityBuilding	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players take actions to construct a virtual city" .
+:MechCivBuilding	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players represent or control a civilization which they develop over time" .
+
+:MechClosedDrafting	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechDrafting;
+				rdfs:comment	"Means of distributing cards or other game elements to players through an ordered, closed selection process" .
+
+:MechContracts		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players fulfill Contracts to earn rewards. These take the form of special goals requiring coordination and planning beyond simply being first past the post. These can be either public, where all players compete to be the first to complete them, or private, where only the owning player may fulfill them" .
+:MechDeckBuilding	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players play cards out of individual decks, seeking to acquire new cards and to play through their decks iteratively, improving them over time through card acquisition or card elimination." .
+:MechDeduction		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players try to determine the identity of hidden information based on clues." .
+:MechDelayedPurchase	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Objects that are purchased during a game do not enter play right away but arrive on a future turn." .
+:MechDieIconResolution	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"The player rolls a number of custom dice to resolve an event or conflict. Results must match specific symbols for success." .
+:MechDifferentWorkerTypes	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Worker units can differ in abilities, or can be upgraded and downgraded, or are valid for placement in different areas and buildings." .
+:MechEndGameBonuses	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players earn or lose bonus Victory Points at the end of the game based on meeting victory conditions." .
+:MechEvents		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Actions occur outside the control of players that cause an immediate effect, change the state of the game, or impact subsequent actions." .
+
+:MechExploration	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+						rdfs:comment	"Players uncover new areas over the course of the game." .
+:MechFarming	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+						rdfs:comment	"Players act as farmers, sowing seeds, harvesting crops, managing animals, or similar." .
+:MechFighting	rdf:type		owl:Class;
+						rdfs:subClassOf	:GameMechanic;
+						rdfs:comment	"Players are able to use martial arts skills within the game." .
+:MechFollowing		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"One player selects an Action. Other players may then perform that Action, or a modified version of it." .
+				
+:MechForceCommitment	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"The players select how many of their forces they will commit to the battle to different categories. This can be simultaneous (hidden) or incrementally, prior to resolution." .
+
+:MechHandManagement	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Features cards that reward players for playing the cards in certain sequences or groups." .
+:MechHexagonGrid		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Pieces are placed on a board tessellated with hexagons, which is used for adjacency and/or movement." .
+
+:MechIncreaseValueUnchosenResources	rdf:type		owl:Class;
+							rdfs:subClassOf	:GameMechanic;
+							rdfs:comment	"If players do not select certain Actions or Resources, then they increase in value." .
+:MechInduction		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players are attempting to determine the rules governing a situation. In a typical induction games, a game master creates a hidden rule. Players then create patterns and are advised by the game master whether they match the rule or not." .
+:MechKingOfTheHill	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Games with a king of the hill mechanism reward players with points or other advantages for occupying a special position on the board." .
+
+:MechLoseATurn		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"A player who “Loses a Turn” must skip their next opportunity for a turn, and will go to the next round, or the next time their turn arises." .
+:MechMapAddition		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"A game map is added to as it is explored." .
+:MechMapDeformation	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"The game map is modified during the course of the game through rotation or shifts." .
+:MechMatching		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players must make their next play by matching a feature on the previous play." .
+:MechMemory	rdf:type		owl:Class;
+			rdfs:subClassOf	:GameMechanic;
+			rdfs:comment	"Hidden, trackable information whose tracking gives players an advantage." .
+:MechModularBoard	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Play occurs upon a modular board that is composed of multiple pieces, often tiles or cards." .
+:MechMultiUseCards	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Multiple actions are shown on a card, but only one can be used." .
+:MechNarrativeChoice	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Multiple action options are presented to the players via a narrative format." .
+:MechNegotiation		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players make agreements about coordinating action, beyond simply Trading." .
+:MechNumber		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players manipulate numbers or use math to achieve outcomes." .
+:MechOncePerGameAbilities	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Players have a special ability that they can use one time per game." .
+:MechOpenDrafting	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechDrafting;
+				rdfs:comment	"Used in games in which players pick cards (or tiles, resources, dice, etc) from a common pool, to gain some advantage (immediate or long-term) or to assemble collections that are used to meet objectives within the game." .
+:MechOwnership		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players own entities, and perform actions for those entities, or collect benefits if others use them." .
+:MechPickupAndDeliver	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players pick up an object at one location on the playing board and bring it to another location on the playing board." . 
+:MechPlayerElimination	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Players can be removed from the game during the gameplay process." .
+:MechPolitics	rdf:type		owl:Class;
+			rdfs:subClassOf	:GameMechanic;
+			rdfs:comment	"Gameplay involves political decisions between players." .
+:MechRacing		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Games where the first player to achieve a key objective wins the game." .
+:MechRollSpinAndMove	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Roll / Spin and move games are games where players roll dice or spin spinners and move playing pieces in accordance with the roll." .
+:MechSetCollection	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"The value of items is dependent on being part of a set; for example, scoring according to groups of a certain quantity or variety." .
+:MechSimultaneousActionSelection		rdf:type		owl:Class;
+							rdfs:subClassOf	:GameMechanic;
+							rdfs:comment	"Players plan their turn simultaneously and secretly. Then, they reveal their plans at the same time." .
+:MechSquareGridBoard	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Pieces are placed on a board tessellated with squares, which is used for adjacency and/or movement" .
+:MechStatCheckResolution	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"There is a target number required to succeed at some test. A random number is generated (by card draw, die roll, etc.), which is compared to the target. If it meets or exceeds the target, the action succeeds." .
+:MechStockHolding	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Stock Holding is a subcategory of Investment, in which players may buy and sell (or retain) defined interests in a shared asset, such as a company, commodity or nation. This will often grant certain privileges of Ownership." .
+:MechStorytelling	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players are provided with conceptual, written, or pictorial stimuli which must be incorporated into a story of the players' creation." .
+:MechSuddenDeathEnding	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"In the case of a tie at the end of regular play, ‘sudden death’ is triggered where play continues until the game ends immediately after a player achieves a certain condition." .
+:MechTags			rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Game objects, typically cards, have icons or other identifiers that identify them as belonging to specific categories." .
+:MechTakeThat		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Competitive maneuvers that directly target one opponent's progress toward victory, but do not directly eliminate any characters or components representing the opponent. Such mechanics include stealing, nullifying, or force-discarding of one opponent's resources, actions, or abilities." .
+:MechTeamBasedGame	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"In team-based games, teams of players compete with one another to obtain victory." .
+:MechTechTrees		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"During the course of the game, new Actions become available to specific players, or existing Actions are improved." .
+:MechTilePlacement	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Tile Placement games feature placing a piece to score VPs or trigger actions, often based on adjacent pieces or pieces in the same group/cluster." .
+:MechTrading		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players may Trade assets directly with each other, rather than via a Market." .
+:MechTurnOrderClaimAction	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"In each round there is a First Player, and turns are taken clockwise from the first player. There is an action that may be taken to claim a place in the turn order (typically, but not always, first) for the next round, with play proceeding clockwise from the First Player. If no one takes the action, turn order remains unchanged." .
+:MechUnitDeployment	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players may deploy units from their reserves onto the board." .
+:MechUnitMovement	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Players may move units around the game board." .
+	:MechPointToPointMovement	rdf:type		owl:Class;
+					rdfs:subClassOf	:MechUnitMovement;
+					rdfs:comment		"Movement occurs only between specific locations on the game board" .
+:MechTrackMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Movement occurs along a linear track" .
+:MechHiddenMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Movement is only visible to some players" .
+:MechImpulseMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Movement is broken up into a series of small actions" .
+
+:MechGridMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Movement between gridded squares or hexagons" .
+:MechAreaMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Movement between irregularly shaped areas" .
+:MechPatternMovement	rdf:type		owl:Class;
+				rdfs:subClassOf	:MechUnitMovement;
+				rdfs:comment		"Pieces move in a specific pattern relative to the board grid." .
+:MechVariablePhaseOrder	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Variable Phase Order implies that turns may not be played the same way as before and / or after." .
+:MechVariablePlayerPowers	rdf:type		owl:Class;
+					rdfs:subClassOf	:GameMechanic;
+					rdfs:comment	"Variable Player Powers is a mechanic that grants different abilities and/or paths to victory to the players." .
+:MechVariableSetup	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"The starting game state varies from game to game, through changes to shared game components like the map, and/or changes to starting player set-ups, resources, objectives, etc." .
+:MechVoting		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"Players vote on whether a proposed action will occur or not." .
+:MechWorkerPlacement	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameMechanic;
+				rdfs:comment	"A stylized form of Action Drafting, players place tokens to trigger an action from a set of actions available to all players, generally one-at-a-time and in turn order." .
+:MechWorkerDelayed		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechWorkerPlacement;
+				rdfs:label		"Delayed Worker Placement".
+:MechWorkerDice		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechWorkerPlacement;
+				rdfs:label		"Dice as Workers".
+:MechWorkerNested		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechWorkerPlacement;
+				rdfs:label		"NestedWorkerPlacement".
+:MechWorkerVariable		rdf:type		owl:Class;
+				rdfs:subClassOf	:MechWorkerPlacement;
+				rdfs:label		"Variable Worker Types".
+
+
+#### Gameplay Functions
+:TabletopGame 	:hasFunction :GameplayFunctions ;
+		:hasFunction :GameObjectives ;
+		:hasFunction :ScoringConditions .
+
+:GameObjectives		rdf:type		owl:Class;
+				rdfs:subClassOf	:GameplayFunctions.
+:ScoringConditions	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameplayFunctions.
+
+:ObjRacing			rdf:type		owl:Class;
+				rdfs:subClassOf	:GameObjectives;
+				rdfs:label		"Racing Objective".
+:ObjPatternBuilding	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameObjectives;
+				rdfs:label		"Pattern Building Objective".
+:ObjElementOrdering	rdf:type		owl:Class;
+				rdfs:subClassOf	:GameObjectives;
+				rdfs:label		"Element Ordering Objective".
+
+:ScoreHiddenVP		rdf:type		owl:Class;
+				rdfs:subClassOf	:ScoringConditions;
+				rdfs:label		"Hidden Victory Points Scoring".
+:ScorePredictBid		rdf:type		owl:Class;
+				rdfs:subClassOf	:ScoringConditions;
+				rdfs:label		"Predictive Bidding Scoring".
+:ScoreHighLow		rdf:type		owl:Class;
+				rdfs:subClassOf	:ScoringConditions;
+				rdfs:label		"Highest-Lowest Scoring".
+
+
+#### Physical Components
+
+:CompGameBoard	rdf:type		owl:Class;
+			rdfs:label		"Game Board Component" ;
+			rdfs:comment	"A physical game board(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompChips		rdf:type		owl:Class;
+			rdfs:label		"Chips Component" ;
+			rdfs:comment	"Physical chip(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompCards		rdf:type		owl:Class;
+			rdfs:label		"Cards Component" ;
+			rdfs:comment	"Physical card(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompTokens	rdf:type		owl:Class;
+			rdfs:label		"Token Component" ;
+			rdfs:comment	"Physical token(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompMeeples	rdf:type		owl:Class;
+			rdfs:label		"Meeples Component" ;
+			rdfs:comment	"Physical meeple(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompDice		rdf:type		owl:Class;
+			rdfs:label		"Dice Component" ;
+			rdfs:comment	"Physical di(c)e" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompMoney		rdf:type		owl:Class;
+			rdfs:label		"Money Component" ;
+			rdfs:comment	"Physical money" ;
+			rdfs:subClassOf	:PhysicalComponents.
+:CompMiniatures	rdf:type		owl:Class;
+			rdfs:label		"Miniatures Component" ;
+			rdfs:comment	"Physical miniature(s)" ;
+			rdfs:subClassOf	:PhysicalComponents.
+
+
+##############################
+#    Property Definitions    #
+##############################
+
+:hasType 	rdf:type 		owl:ObjectProperty ;
+		rdfs:label		"Has Type" ;
+		rdfs:comment	"Relates a tabletop INSTANCE to a game type" ;
+		rdfs:domain 	:TabletopGame ;
+		rdfs:range 	:GameType .
+
+:ofGameType	rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Of Game Type" ;
+			rdfs:comment	"Relates a game type to a clustering type" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:GameType .
+
+
+:hasMechanic	rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Has Mechanic" ;
+			rdfs:comment	"Relates a tabletop game to a mechanic" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:GameMechanic .
+
+:hasFunction	rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Has Function" ;
+			rdfs:comment	"Relates a tabletop game with a gameplay function" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:GameplayFunctions .
+
+:hasObjective	rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Has Objective" ;
+			rdfs:comment	"Relates a tabletop game with a game objective" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:GameObjectives .
+:hasScoreCon	rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Has Scoring Condition" ;
+			rdfs:comment	"Relates a tabletop game with a scoring condition" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:ScoringConditions .
+
+
+
+:hasPart		rdf:type		owl:ObjectProperty ;
+			rdfs:label		"Has Part" ;
+			rdfs:comment	"Relates a tabletop game with a physical component" ;
+			rdfs:domain	:TabletopGame ;
+			rdfs:range		:PhysicalComponents .
+
+
+:hasMinimumTime		rdf:type	owl:DatatypeProperty ;
+				rdfs:domain	:TabletopGame ;
+				rdfs:range [
+					rdf:type	rdfs:Datatype ;
+					owl:onDatatype	xsd:integer; ] .
+:hasMaximumTime		rdf:type	owl:DatatypeProperty ;
+				rdfs:domain	:TabletopGame ;
+				rdfs:range [
+					rdf:type	rdfs:Datatype ;
+					owl:onDatatype	xsd:integer; ] .
+:hasMinimumPlayers	rdf:type	owl:DatatypeProperty ;
+				rdfs:domain	:TabletopGame ;
+				rdfs:range [
+					rdf:type	rdfs:Datatype ;
+					owl:onDatatype	xsd:integer; ] .
+:hasMaximumPlayers 	rdf:type	owl:DatatypeProperty ;
+				rdfs:domain	:TabletopGame ;
+				rdfs:range [
+					rdf:type	rdfs:Datatype ;
+					owl:onDatatype	xsd:integer; ] .
+:hasMinimumAge 		rdf:type	owl:DatatypeProperty ;
+				rdfs:domain	:TabletopGame ;
+				rdfs:range [
+					rdf:type	rdfs:Datatype ;
+					owl:onDatatype	xsd:integer; ] .
+
